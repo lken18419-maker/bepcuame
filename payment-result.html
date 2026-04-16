@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kết quả thanh toán — Bếp Của Mẹ</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body { display:flex; align-items:center; justify-content:center; min-height:100vh; background:#12101F; }
+    .result-card {
+      background:#1F1040; border-radius:24px; padding:48px 40px;
+      text-align:center; max-width:440px; width:90%;
+      box-shadow:0 20px 60px rgba(0,0,0,0.4);
+    }
+    .result-icon { font-size:3.5rem; margin-bottom:16px; }
+    .result-title { font-size:1.5rem; font-weight:800; color:#fff; margin:0 0 10px; }
+    .result-sub { color:rgba(255,255,255,0.5); font-size:0.95rem; margin:0 0 8px; }
+    .order-code {
+      display:inline-block; background:rgba(255,214,10,0.12);
+      border:1.5px solid rgba(255,214,10,0.3); color:#FFD60A;
+      border-radius:10px; padding:8px 20px; font-weight:800;
+      font-size:1rem; margin:16px 0 24px; letter-spacing:1px;
+    }
+    .btn-home {
+      display:inline-block; background:linear-gradient(135deg,#FF6B2B,#FF8C00);
+      color:#fff; font-weight:800; padding:14px 32px; border-radius:14px;
+      text-decoration:none; font-size:1rem; border:none; cursor:pointer;
+    }
+    .result-card.fail .result-icon::after { content:''; }
+  </style>
+</head>
+<body>
+<div class="result-card" id="card">
+  <div class="result-icon" id="icon">⏳</div>
+  <h2 class="result-title" id="title">Đang xác nhận…</h2>
+  <p class="result-sub" id="sub"></p>
+  <div class="order-code" id="orderCode"></div>
+  <a href="/" class="btn-home">Về trang chủ 🏠</a>
+</div>
+<script>
+  const params  = new URLSearchParams(location.search);
+  const method  = params.get('method');   // momo | vnpay
+  const order   = params.get('order');
+  const icon    = document.getElementById('icon');
+  const title   = document.getElementById('title');
+  const sub     = document.getElementById('sub');
+  const codeEl  = document.getElementById('orderCode');
+
+  codeEl.textContent = order || '';
+
+  // MoMo trả về resultCode=0 nếu thành công
+  // VNPay trả về vnp_ResponseCode=00 nếu thành công
+  let success = false;
+  if (method === 'momo') {
+    success = params.get('resultCode') === '0';
+  } else if (method === 'vnpay') {
+    success = params.get('vnp_ResponseCode') === '00';
+  }
+
+  if (success) {
+    icon.textContent  = '🎉';
+    title.textContent = 'Thanh toán thành công!';
+    sub.textContent   = 'Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ liên hệ xác nhận trong 15 phút.';
+  } else {
+    icon.textContent  = '❌';
+    title.textContent = 'Thanh toán thất bại';
+    sub.textContent   = 'Đơn hàng chưa được thanh toán. Bạn có thể thử lại hoặc chọn phương thức khác.';
+    document.getElementById('card').style.borderColor = 'rgba(255,100,100,0.3)';
+  }
+</script>
+</body>
+</html>

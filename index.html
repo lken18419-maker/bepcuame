@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bếp Của Mẹ - Đồ Ăn Vặt Giao Hàng Tận Nơi</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+
+<!-- ====== HEADER ====== -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#home">
+      <img src="images/logo.png" alt="Bếp Của Mẹ" class="logo-img"/>
+    </a>
+
+    <nav id="desktopNav">
+      <a href="#home">Trang chủ</a>
+      <a href="#products">Sản phẩm</a>
+      <a href="#about">Về chúng tôi</a>
+      <a href="#loyalty">Thành viên</a>
+      <a href="#contact">Liên hệ</a>
+    </nav>
+
+    <!-- Hamburger (mobile only) -->
+    <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Mở menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <div class="header-actions">
+      <div class="search-wrap">
+        <input type="text" id="searchInput" placeholder="Tìm món ăn vặt..." oninput="filterProducts()"/>
+        <i class="fa fa-search search-icon"></i>
+      </div>
+
+      <!-- Nút đăng nhập (khi chưa đăng nhập) -->
+      <button class="login-btn" id="loginBtn" onclick="openAuthModal('login')">
+        <i class="fa fa-user"></i><span>Đăng nhập</span>
+      </button>
+
+      <!-- User menu (khi đã đăng nhập) -->
+      <div class="user-menu" id="userMenu" style="display:none">
+        <button class="user-btn" onclick="openProfilePanel()">
+          <div class="user-avatar" id="userAvatar"></div>
+          <div class="user-info-header">
+            <span id="userMenuName"></span>
+            <span class="tier-pill" id="userMenuTier"></span>
+          </div>
+        </button>
+      </div>
+
+      <button class="cart-btn" onclick="toggleCart()" aria-label="Giỏ hàng">
+        <i class="fa fa-shopping-bag"></i>
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ====== SHIPPING NOTICE ====== -->
+<div class="shipping-notice">
+  <span>🚚</span>
+  <span>Ship toàn quốc <strong>30.000đ</strong> · Miễn phí ship đơn từ <strong>700.000đ</strong></span>
+  <span>·</span>
+  <span>📦 Đóng gói cẩn thận · Giao nhanh toàn quốc</span>
+</div>
+
+<!-- ====== HERO ====== -->
+<section class="hero" id="home">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span></span> Giao hàng toàn quốc · Miễn phí từ 700K
+      </div>
+      <h1>Đồ ăn vặt<br/><em>Ngon chuẩn vị</em><br/>nhà làm 🍱</h1>
+      <p class="hero-desc">Thơm ngon, tươi mới, chế biến mỗi ngày. Ship toàn quốc <strong style="color:var(--amber)">30.000đ</strong> – miễn phí từ <strong style="color:var(--amber)">700.000đ!</strong></p>
+      <div class="hero-actions">
+        <a href="#products" class="btn-primary">Đặt ngay <i class="fa fa-arrow-right"></i></a>
+        <a href="#about" class="btn-outline">Tìm hiểu thêm</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><strong>200+</strong><span>Món ngon</span></div>
+        <div class="hero-stat"><strong>5K+</strong><span>Khách hàng</span></div>
+        <div class="hero-stat"><strong>4.9⭐</strong><span>Đánh giá</span></div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-ring">
+        <div class="hero-ring-inner">
+          <div class="orbit-item" style="top:0%;left:50%;transform:translateX(-50%)">🍟</div>
+          <div class="orbit-item" style="top:15%;right:-10%">🍫</div>
+          <div class="orbit-item" style="bottom:15%;right:-10%">🧃</div>
+          <div class="orbit-item" style="bottom:0%;left:50%;transform:translateX(-50%)">🍬</div>
+          <div class="orbit-item" style="bottom:15%;left:-10%">🍪</div>
+          <div class="orbit-item" style="top:15%;left:-10%">🥨</div>
+          <div class="hero-center-emoji">🍱</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== PRODUCTS ====== -->
+<section class="products-section" id="products">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">🛒 Thực đơn</div>
+      <h2 class="section-title">Món ăn vặt <span>hôm nay</span></h2>
+      <p class="section-sub">Tất cả được chế biến tươi mới, đóng gói cẩn thận và giao tận nơi</p>
+    </div>
+    <div class="cat-filters">
+      <button class="cat-btn active" onclick="filterCategory('all', this)">🍽️ Tất cả</button>
+      <button class="cat-btn" onclick="filterCategory('chips', this)">🥔 Snack & Chips</button>
+      <button class="cat-btn" onclick="filterCategory('candy', this)">🍬 Bánh Kẹo</button>
+      <button class="cat-btn" onclick="filterCategory('drink', this)">🧃 Đồ Uống</button>
+      <button class="cat-btn" onclick="filterCategory('chocolate', this)">🍫 Socola</button>
+      <button class="cat-btn" onclick="filterCategory('biscuit', this)">🍪 Bánh Quy</button>
+    </div>
+    <div class="product-grid" id="productGrid"></div>
+  </div>
+</section>
+
+<!-- ====== PROMO BANNER ====== -->
+<div class="promo-section">
+  <div class="promo-banner">
+    <div class="promo-content">
+      <div class="promo-tag">🔥 Ưu đãi đặc biệt</div>
+      <h2>Mua 3 tặng 1 <em>miễn phí</em></h2>
+      <p>Áp dụng cho tất cả đơn hàng từ 3 món trở lên. Đặt ngay hôm nay – số lượng có hạn!</p>
+      <a href="#products" class="btn-primary">Đặt hàng ngay <i class="fa fa-arrow-right"></i></a>
+    </div>
+    <div class="promo-visual">
+      <div class="promo-emoji-card">🍟</div>
+      <div class="promo-emoji-card big">🍱</div>
+      <div class="promo-emoji-card">🧃</div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== ABOUT ====== -->
+<section class="about-section" id="about">
+  <div class="container about-inner">
+    <div class="about-visual">
+      <div class="about-grid-imgs">
+        <div class="about-img-card"><div class="icon">🌿</div><span>Nguyên liệu sạch</span></div>
+        <div class="about-img-card"><div class="icon">🚀</div><span>Giao hàng nhanh</span></div>
+        <div class="about-img-card"><div class="icon">❤️</div><span>Chuẩn vị nhà làm</span></div>
+        <div class="about-img-card"><div class="icon">📦</div><span>Đóng gói cẩn thận</span></div>
+      </div>
+      <div class="about-badge-float">
+        <div class="emoji">⭐</div>
+        <div><strong>4.9 / 5.0</strong><small>Trên 5.000 đánh giá</small></div>
+      </div>
+    </div>
+
+    <div class="about-text">
+      <div class="section-label">🍱 Về chúng tôi</div>
+      <h2>Tại sao chọn<br/><span>Bếp Của Mẹ?</span></h2>
+      <p>Chúng tôi mang đến những món ăn vặt thơm ngon, tươi mới – được chế biến mỗi ngày với tình yêu thương và nguyên liệu sạch, giao hàng toàn quốc tận tay bạn.</p>
+      <ul class="features-list">
+        <li>
+          <div class="feature-icon"><i class="fa fa-leaf"></i></div>
+          <div class="feature-text"><strong>Nguyên liệu tươi sạch</strong><small>Chọn lọc kỹ, chế biến mỗi ngày – không chất bảo quản</small></div>
+        </li>
+        <li>
+          <div class="feature-icon"><i class="fa fa-bolt"></i></div>
+          <div class="feature-text"><strong>Giao hàng toàn quốc</strong><small>Phí ship 30.000đ · Miễn phí cho đơn từ 700.000đ</small></div>
+        </li>
+        <li>
+          <div class="feature-icon"><i class="fa fa-shield-alt"></i></div>
+          <div class="feature-text"><strong>Đổi trả trong 24 giờ</strong><small>Không hài lòng – hoàn tiền hoặc đổi món ngay</small></div>
+        </li>
+        <li>
+          <div class="feature-icon"><i class="fa fa-wallet"></i></div>
+          <div class="feature-text"><strong>Thanh toán linh hoạt</strong><small>COD · Chuyển khoản · Momo · ZaloPay</small></div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ====== CONTACT ====== -->
+<!-- ====== LOYALTY ====== -->
+<section class="loyalty-section" id="loyalty">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">💎 Thành Viên Thân Thiết</div>
+      <h2 class="section-title">Hệ thống <span>tích điểm & ưu đãi</span></h2>
+      <p class="section-sub">Mua sắm càng nhiều – ưu đãi càng lớn. Đăng ký miễn phí, tích lũy ngay hôm nay!</p>
+    </div>
+
+    <!-- Tier table -->
+    <div class="loyalty-table-wrap">
+      <table class="loyalty-table">
+        <thead>
+          <tr>
+            <th>Hạng thành viên</th>
+            <th>Chi tiêu tích lũy</th>
+            <th>Giảm giá</th>
+            <th>Tích lũy đơn hàng</th>
+            <th>Ưu tiên hỗ trợ</th>
+            <th>Giao hàng ưu tiên</th>
+            <th>Quà sinh nhật</th>
+            <th>Ưu đãi VIP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="lt-row-member">
+            <td class="lt-tier-cell"><span class="lt-tier-name-badge" style="background:linear-gradient(135deg,#444460,#7878A0)">👤 Thành Viên</span></td>
+            <td>Từ 0đ</td>
+            <td class="lt-discount-cell">—</td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+            <td><i class="fa fa-minus lt-no"></i></td>
+            <td><i class="fa fa-minus lt-no"></i></td>
+            <td><i class="fa fa-minus lt-no"></i></td>
+            <td><i class="fa fa-minus lt-no"></i></td>
+          </tr>
+          <tr class="lt-row-bronze">
+            <td class="lt-tier-cell"><span class="lt-tier-name-badge" style="background:linear-gradient(135deg,#8B4500,#CD7F32)">🥉 Đồng</span></td>
+            <td>&gt; 3.000.000đ</td>
+            <td class="lt-discount-cell" style="color:#CD7F32"><strong>3%</strong></td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+            <td><i class="fa fa-minus lt-no"></i></td>
+            <td><i class="fa fa-minus lt-no"></i></td>
+            <td><i class="fa fa-minus lt-no"></i></td>
+          </tr>
+          <tr class="lt-row-silver">
+            <td class="lt-tier-cell"><span class="lt-tier-name-badge" style="background:linear-gradient(135deg,#888888,#C8C8C8)">🥈 Bạc</span></td>
+            <td>&gt; 5.000.000đ</td>
+            <td class="lt-discount-cell" style="color:#C8C8C8"><strong>5%</strong></td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+            <td><i class="fa fa-minus lt-no"></i></td>
+            <td><i class="fa fa-minus lt-no"></i></td>
+            <td><i class="fa fa-minus lt-no"></i></td>
+          </tr>
+          <tr class="lt-row-gold lt-highlight">
+            <td class="lt-tier-cell">
+              <span class="lt-tier-name-badge" style="background:linear-gradient(135deg,#E0A000,#FFD700)">🥇 Vàng</span>
+              <span class="lt-popular">Phổ biến</span>
+            </td>
+            <td>&gt; 8.000.000đ</td>
+            <td class="lt-discount-cell" style="color:#FFD700"><strong>10%</strong></td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+            <td><i class="fa fa-minus lt-no"></i></td>
+            <td><i class="fa fa-minus lt-no"></i></td>
+          </tr>
+          <tr class="lt-row-platinum">
+            <td class="lt-tier-cell"><span class="lt-tier-name-badge" style="background:linear-gradient(135deg,#7070A0,#C8C8E0)">🏆 Bạch Kim</span></td>
+            <td>&gt; 10.000.000đ</td>
+            <td class="lt-discount-cell" style="color:#C8C8E0"><strong>15%</strong></td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+            <td><i class="fa fa-minus lt-no"></i></td>
+          </tr>
+          <tr class="lt-row-diamond">
+            <td class="lt-tier-cell"><span class="lt-tier-name-badge" style="background:linear-gradient(135deg,#0044CC,#00D4FF)">💎 Kim Cương</span></td>
+            <td>&gt; 15.000.000đ</td>
+            <td class="lt-discount-cell" style="color:#00D4FF"><strong>20%</strong></td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+            <td><i class="fa fa-check lt-yes"></i></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Spending Milestones Roadmap -->
+    <div class="lm-wrap">
+      <h3 class="lm-title">Lộ trình chi tiêu tích lũy</h3>
+      <p class="lm-sub">Tổng tiền các đơn hàng đã mua cộng dồn để lên hạng</p>
+      <div class="lm-track">
+        <div class="lm-step" style="--tier-bg:linear-gradient(135deg,#444460,#7878A0)">
+          <div class="lm-icon">👤</div>
+          <div class="lm-info">
+            <div class="lm-tier-name">Thành Viên</div>
+            <div class="lm-amount">Từ <strong>0đ</strong></div>
+          </div>
+        </div>
+        <div class="lm-arrow"><i class="fa fa-chevron-right"></i></div>
+        <div class="lm-step" style="--tier-bg:linear-gradient(135deg,#8B4500,#CD7F32)">
+          <div class="lm-icon">🥉</div>
+          <div class="lm-info">
+            <div class="lm-tier-name">Đồng</div>
+            <div class="lm-amount">Từ <strong>3.000.000đ</strong></div>
+          </div>
+        </div>
+        <div class="lm-arrow"><i class="fa fa-chevron-right"></i></div>
+        <div class="lm-step" style="--tier-bg:linear-gradient(135deg,#888888,#C8C8C8)">
+          <div class="lm-icon">🥈</div>
+          <div class="lm-info">
+            <div class="lm-tier-name">Bạc</div>
+            <div class="lm-amount">Từ <strong>5.000.000đ</strong></div>
+          </div>
+        </div>
+        <div class="lm-arrow"><i class="fa fa-chevron-right"></i></div>
+        <div class="lm-step lm-popular" style="--tier-bg:linear-gradient(135deg,#E0A000,#FFD700)">
+          <div class="lm-icon">🥇</div>
+          <div class="lm-info">
+            <div class="lm-tier-name">Vàng</div>
+            <div class="lm-amount">Từ <strong>8.000.000đ</strong></div>
+          </div>
+          <span class="lm-badge-pop">Phổ biến</span>
+        </div>
+        <div class="lm-arrow"><i class="fa fa-chevron-right"></i></div>
+        <div class="lm-step" style="--tier-bg:linear-gradient(135deg,#7070A0,#C8C8E0)">
+          <div class="lm-icon">🏆</div>
+          <div class="lm-info">
+            <div class="lm-tier-name">Bạch Kim</div>
+            <div class="lm-amount">Từ <strong>10.000.000đ</strong></div>
+          </div>
+        </div>
+        <div class="lm-arrow"><i class="fa fa-chevron-right"></i></div>
+        <div class="lm-step lm-top" style="--tier-bg:linear-gradient(135deg,#0044CC,#00D4FF)">
+          <div class="lm-icon">💎</div>
+          <div class="lm-info">
+            <div class="lm-tier-name">Kim Cương</div>
+            <div class="lm-amount">Từ <strong>15.000.000đ</strong></div>
+          </div>
+          <span class="lm-badge-pop" style="background:linear-gradient(135deg,#0044CC,#00D4FF)">VIP</span>
+        </div>
+      </div>
+      <p class="lm-note"><i class="fa fa-info-circle"></i> Chi tiêu tích lũy = tổng tiền tất cả đơn hàng đã đặt thành công (cộng dồn, không reset)</p>
+    </div>
+
+    <!-- CTA -->
+    <div class="loyalty-cta">
+      <div class="loyalty-cta-text">
+        <h3>Bắt đầu tích lũy ngay hôm nay!</h3>
+        <p>Đăng ký miễn phí – mỗi đơn hàng đều được ghi nhận tự động.</p>
+      </div>
+      <button class="btn-primary" onclick="openAuthModal('register')">
+        Đăng ký thành viên <i class="fa fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="contact-section" id="contact">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">📬 Liên hệ</div>
+      <h2 class="section-title">Đặt hàng & <span>Hỏi đáp</span></h2>
+      <p class="section-sub">Liên hệ ngay – chúng tôi phản hồi trong vòng 15 phút!</p>
+    </div>
+    <div class="contact-inner">
+      <div class="contact-info-wrap">
+        <h3>Thông tin liên hệ</h3>
+        <p>Để đặt hàng nhanh, nhắn tin qua Facebook hoặc điền form bên cạnh nhé!</p>
+        <div class="contact-cards">
+          <div class="contact-card">
+            <div class="cc-icon"><i class="fa fa-map-marker-alt"></i></div>
+            <div class="cc-text"><strong>Địa chỉ</strong><span>TP. Hồ Chí Minh</span></div>
+          </div>
+          <div class="contact-card">
+            <div class="cc-icon fb"><i class="fab fa-facebook"></i></div>
+            <div class="cc-text"><strong>Facebook</strong><span>facebook.com/bepcuame.anvat</span></div>
+          </div>
+          <div class="contact-card">
+            <div class="cc-icon"><i class="fa fa-clock"></i></div>
+            <div class="cc-text"><strong>Giờ hoạt động</strong><span>8:00 – 22:00 hàng ngày</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-form-wrap">
+        <h3>📝 Gửi tin nhắn</h3>
+        <form onsubmit="submitForm(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Họ tên</label>
+              <input type="text" placeholder="Nguyễn Văn A" required/>
+            </div>
+            <div class="form-group">
+              <label>Số điện thoại</label>
+              <input type="tel" placeholder="0909 xxx xxx" required/>
+            </div>
+          </div>
+          <div class="form-group form-full" style="margin-top:14px">
+            <label>Địa chỉ giao hàng</label>
+            <input type="text" placeholder="Số nhà, đường, quận..." required/>
+          </div>
+          <div class="form-group form-full" style="margin-top:14px">
+            <label>Ghi chú / Món muốn đặt</label>
+            <textarea placeholder="Ví dụ: 2 phần bánh tráng trộn, 1 ly trà sữa không đường..." rows="4" required></textarea>
+          </div>
+          <div class="form-group form-full" style="margin-top:14px">
+            <label>Hình thức thanh toán</label>
+            <select required>
+              <option value="" disabled selected>-- Chọn hình thức --</option>
+              <option value="cod">💵 COD – Thanh toán khi nhận hàng</option>
+              <option value="transfer">🏦 Chuyển khoản ngân hàng</option>
+              <option value="momo">💜 Ví Momo</option>
+            </select>
+          </div>
+          <div id="payment-info" style="margin-top:10px"></div>
+          <div style="margin-top:20px">
+            <button type="submit" class="btn-primary w-full">Gửi đơn hàng <i class="fa fa-paper-plane"></i></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== FOOTER ====== -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="logo">
+        <img src="images/logo.png" alt="Bếp Của Mẹ" class="logo-img logo-img-footer"/>
+      </div>
+      <p>Thơm ngon, tươi mới – chuẩn vị nhà làm. Giao hàng toàn quốc, miễn phí ship đơn từ 700.000đ.</p>
+      <div class="social-links">
+        <a href="https://www.facebook.com/bepcuame.anvat" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com/bepcuame/" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.tiktok.com/@bepcuame.anvat" target="_blank"><i class="fab fa-tiktok"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Danh mục</h4>
+      <ul>
+        <li><a href="#products">🥔 Snack & Chips</a></li>
+        <li><a href="#products">🍬 Bánh Kẹo</a></li>
+        <li><a href="#products">🧃 Đồ Uống</a></li>
+        <li><a href="#products">🍫 Socola</a></li>
+        <li><a href="#products">🍪 Bánh Quy</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Hỗ trợ</h4>
+      <ul>
+        <li><a href="#about">Về chúng tôi</a></li>
+        <li><a href="#contact">Đặt hàng</a></li>
+        <li><a href="#contact">Chính sách đổi trả</a></li>
+        <li><a href="#contact">Liên hệ</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Bếp Của Mẹ. Tất cả quyền được bảo lưu.</p>
+    <p>Made with ❤️ tại TP. Hồ Chí Minh</p>
+  </div>
+</footer>
+
+<!-- ====== CART SIDEBAR ====== -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h3>🛒 Giỏ hàng của bạn</h3>
+    <button class="cart-close" onclick="toggleCart()"><i class="fa fa-times"></i></button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer">
+    <div id="cartShipping" style="font-size:0.82rem;margin-bottom:10px;color:var(--text-muted)"></div>
+    <div class="cart-subtotal">
+      <span>Tổng cộng</span>
+      <strong id="cartTotal">0đ</strong>
+    </div>
+    <button class="btn-primary w-full" onclick="checkout()">Thanh toán ngay <i class="fa fa-arrow-right"></i></button>
+  </div>
+</div>
+
+<!-- ====== MOBILE NAV ====== -->
+<div class="mnav-overlay" id="mnavOverlay" onclick="closeMobileNav()"></div>
+<div class="mnav-drawer" id="mnavDrawer">
+  <div class="mnav-header">
+    <img src="images/LOGO.png" alt="Logo" style="width:36px;height:36px;border-radius:50%;object-fit:contain"/>
+    <span>Bếp Của Mẹ</span>
+    <button onclick="closeMobileNav()"><i class="fa fa-times"></i></button>
+  </div>
+  <nav class="mnav-links">
+    <a href="#home"     onclick="closeMobileNav()"><i class="fa fa-home"></i> Trang chủ</a>
+    <a href="#products" onclick="closeMobileNav()"><i class="fa fa-th-large"></i> Sản phẩm</a>
+    <a href="#loyalty"  onclick="closeMobileNav()"><i class="fa fa-star"></i> Thành viên</a>
+    <a href="#about"    onclick="closeMobileNav()"><i class="fa fa-info-circle"></i> Về chúng tôi</a>
+    <a href="#contact"  onclick="closeMobileNav()"><i class="fa fa-envelope"></i> Liên hệ</a>
+  </nav>
+  <div class="mnav-footer" id="mnavFooter">
+    <button class="btn-primary w-full" onclick="openAuthModal('login');closeMobileNav()">
+      <i class="fa fa-user"></i> Đăng nhập / Đăng ký
+    </button>
+  </div>
+</div>
+
+<!-- ====== AUTH MODAL (Đăng nhập / Đăng ký) ====== -->
+<div class="auth-overlay" id="authOverlay" onclick="closeAuthModal()"></div>
+<div class="auth-modal" id="authModal">
+  <button class="auth-modal-close" onclick="closeAuthModal()"><i class="fa fa-times"></i></button>
+  <div class="auth-brand">
+    <img src="images/LOGO.png" alt="Bếp Của Mẹ" style="width:54px;height:54px;border-radius:50%;object-fit:contain"/>
+    <h3>Bếp Của Mẹ</h3>
+    <p>Thành viên thân thiết – Tích điểm · Nhận ưu đãi</p>
+  </div>
+  <div class="auth-tabs">
+    <button class="auth-tab active" data-tab="login"    onclick="switchAuthTab('login')">Đăng nhập</button>
+    <button class="auth-tab"        data-tab="register" onclick="switchAuthTab('register')">Đăng ký</button>
+  </div>
+  <p class="auth-error" id="authError"></p>
+
+  <!-- Đăng nhập -->
+  <form id="loginForm" onsubmit="submitLogin(event)">
+    <div class="auth-field">
+      <label><i class="fa fa-phone"></i> Số điện thoại</label>
+      <input type="tel" id="loginPhone" placeholder="0909 xxx xxx" pattern="[0-9]{10}" maxlength="10" required/>
+    </div>
+    <div class="auth-field">
+      <label><i class="fa fa-lock"></i> Mật khẩu</label>
+      <input type="password" id="loginPass" placeholder="••••••••" required/>
+    </div>
+    <button type="submit" class="btn-primary w-full" style="margin-top:18px">
+      Đăng nhập <i class="fa fa-arrow-right"></i>
+    </button>
+    <p class="auth-switch">Chưa có tài khoản?
+      <a href="#" onclick="event.preventDefault();switchAuthTab('register')">Đăng ký ngay</a>
+    </p>
+  </form>
+
+  <!-- Đăng ký -->
+  <form id="registerForm" onsubmit="submitRegister(event)" style="display:none">
+    <div class="auth-field">
+      <label><i class="fa fa-user"></i> Họ và tên</label>
+      <input type="text" id="regName" placeholder="Nguyễn Văn A" required/>
+    </div>
+    <div class="auth-field">
+      <label><i class="fa fa-phone"></i> Số điện thoại</label>
+      <input type="tel" id="regPhone" placeholder="0909 xxx xxx" pattern="[0-9]{10}" maxlength="10" required/>
+    </div>
+    <div class="auth-field">
+      <label><i class="fa fa-lock"></i> Mật khẩu</label>
+      <input type="password" id="regPass" placeholder="Ít nhất 6 ký tự" required/>
+    </div>
+    <div class="auth-field">
+      <label><i class="fa fa-lock"></i> Xác nhận mật khẩu</label>
+      <input type="password" id="regPass2" placeholder="Nhập lại mật khẩu" required/>
+    </div>
+    <button type="submit" class="btn-primary w-full" style="margin-top:18px">
+      Đăng ký <i class="fa fa-user-plus"></i>
+    </button>
+    <p class="auth-switch">Đã có tài khoản?
+      <a href="#" onclick="event.preventDefault();switchAuthTab('login')">Đăng nhập</a>
+    </p>
+  </form>
+</div>
+
+<!-- ====== PROFILE PANEL ====== -->
+<div class="profile-overlay" id="profileOverlay" onclick="closeProfilePanel()"></div>
+<div class="profile-panel" id="profilePanel">
+  <div class="pp-header">
+    <h3>Tài khoản của tôi</h3>
+    <button class="pp-close" onclick="closeProfilePanel()"><i class="fa fa-times"></i></button>
+  </div>
+  <div class="pp-body">
+    <!-- Avatar + tên -->
+    <div class="pp-user-row">
+      <div class="pp-avatar" id="ppAvatar"></div>
+      <div>
+        <div class="pp-name" id="ppName"></div>
+        <div class="pp-phone" id="ppPhone"></div>
+      </div>
+    </div>
+
+    <!-- Tier card -->
+    <div class="pp-tier-card" id="ppTierCard">
+      <div class="pp-tier-icon" id="ppTierIcon"></div>
+      <div class="pp-tier-info">
+        <div class="pp-tier-name" id="ppTierName"></div>
+        <div class="pp-tier-discount" id="ppDiscount"></div>
+      </div>
+      <div class="pp-tier-spent" id="ppSpent"></div>
+    </div>
+
+    <!-- Progress -->
+    <div class="pp-section" id="ppProgressWrap"></div>
+
+    <!-- Bảng ưu đãi -->
+    <div class="pp-section">
+      <div class="pp-section-title">Bảng ưu đãi hạng thành viên</div>
+      <div id="ppBenefits"></div>
+    </div>
+
+    <!-- Lịch sử đơn hàng -->
+    <div class="pp-section">
+      <div class="pp-section-title">Lịch sử đơn hàng</div>
+      <div id="ppOrders"></div>
+    </div>
+
+    <button class="btn-outline-dark w-full" onclick="authLogout();closeProfilePanel()">
+      <i class="fa fa-sign-out-alt"></i> Đăng xuất
+    </button>
+  </div>
+</div>
+
+<!-- ====== CHECKOUT MODAL ====== -->
+<div class="checkout-overlay" id="checkoutOverlay" onclick="closeCheckout()"></div>
+<div class="checkout-modal" id="checkoutModal">
+  <div class="co-header">
+    <div class="co-header-left">
+      <button class="co-back" onclick="closeCheckout()"><i class="fa fa-arrow-left"></i></button>
+      <h3>Xác nhận đơn hàng</h3>
+    </div>
+    <button class="co-close" onclick="closeCheckout()"><i class="fa fa-times"></i></button>
+  </div>
+
+  <div class="co-body">
+    <!-- Cột trái: form thông tin -->
+    <div class="co-left">
+      <div class="co-section-title"><i class="fa fa-map-marker-alt"></i> Thông tin giao hàng</div>
+      <form id="checkoutForm" onsubmit="submitCheckout(event)">
+        <div class="co-form-row">
+          <div class="co-field">
+            <label>Họ và tên <span class="req">*</span></label>
+            <input type="text" id="co-name" placeholder="Nguyễn Văn A" required/>
+          </div>
+          <div class="co-field">
+            <label>Số điện thoại <span class="req">*</span></label>
+            <input type="tel" id="co-phone" placeholder="0909 xxx xxx" pattern="[0-9]{10}" maxlength="10" required/>
+          </div>
+        </div>
+        <div class="co-field" style="margin-top:14px">
+          <label>Địa chỉ giao hàng <span class="req">*</span></label>
+          <input type="text" id="co-address" placeholder="Số nhà, tên đường, phường/xã..." required/>
+        </div>
+        <div class="co-form-row" style="margin-top:14px">
+          <div class="co-field">
+            <label>Tỉnh / Thành phố <span class="req">*</span></label>
+            <select id="co-city" required>
+              <option value="" disabled selected>-- Chọn tỉnh thành --</option>
+              <option>TP. Hồ Chí Minh</option>
+              <option>Hà Nội</option>
+              <option>Đà Nẵng</option>
+              <option>Cần Thơ</option>
+              <option>Hải Phòng</option>
+              <option>Bình Dương</option>
+              <option>Đồng Nai</option>
+              <option>Khác</option>
+            </select>
+          </div>
+          <div class="co-field">
+            <label>Hình thức thanh toán <span class="req">*</span></label>
+            <select id="co-payment" required onchange="updatePaymentInfo()">
+              <option value="" disabled selected>-- Chọn --</option>
+              <option value="cod">💵 COD – Trả khi nhận hàng</option>
+              <option value="transfer">🏦 Chuyển khoản ngân hàng</option>
+              <option value="momo">💜 Ví Momo</option>
+            </select>
+          </div>
+        </div>
+        <div id="co-payment-info" style="margin-top:12px"></div>
+        <div class="co-field" style="margin-top:14px">
+          <label>Ghi chú (tuỳ chọn)</label>
+          <textarea id="co-note" placeholder="Giao giờ hành chính, không bấm chuông..." rows="3"></textarea>
+        </div>
+      </form>
+    </div>
+
+    <!-- Cột phải: tóm tắt đơn -->
+    <div class="co-right">
+      <div class="co-section-title"><i class="fa fa-shopping-bag"></i> Tóm tắt đơn hàng</div>
+      <div class="co-order-items" id="coOrderItems"></div>
+      <div class="co-order-summary" id="coOrderSummary"></div>
+      <button type="submit" form="checkoutForm" class="btn-primary w-full co-submit">
+        Đặt hàng <i class="fa fa-check-circle"></i>
+      </button>
+      <p class="co-note-txt">Sau khi đặt, chúng tôi sẽ liên hệ xác nhận trong vòng <strong>15 phút</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ====== TOAST ====== -->
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
