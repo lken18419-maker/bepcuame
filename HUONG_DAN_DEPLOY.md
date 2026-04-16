@@ -1,105 +1,164 @@
-# Hướng dẫn Deploy Google Apps Script — Bếp Của Mẹ
+# Hướng dẫn Deploy — Bếp Của Mẹ
 
-## Tổng quan
+## Tổng quan hệ thống
 
 ```
-Website (script.js)  →  fetch()  →  Google Apps Script Web App  →  Google Sheets
+GitHub (code)
+    │
+    └── push lên main
+            │
+            ▼
+    GitHub Actions (CI/CD)
+            │
+            ▼
+    Vercel (hosting web)  ←→  Supabase (database)
+    bepcuame.vercel.app         users + orders
+                                    │
+                              Edge Functions
+                              (MoMo / VNPay)
 ```
 
-Toàn bộ dữ liệu tài khoản và đơn hàng được lưu trên Google Sheets của bạn.  
-Email thông báo đơn mới được gửi qua tài khoản Gmail của bạn.
+---
+
+## Phần 1 — Vercel (Hosting)
+
+Website đã được deploy tại: **https://bepcuame.vercel.app**
+
+### Cập nhật code lên web
+```bash
+git add .
+git commit -m "mô tả thay đổi"
+git push
+```
+GitHub Actions sẽ tự động deploy trong ~40 giây.
+
+### Deploy thủ công (khi cần)
+```bash
+cd d:/snack-shop
+vercel --yes
+```
 
 ---
 
-## Bước 1 — Tạo Google Sheet
+## Phần 2 — Supabase (Database)
 
-1. Truy cập [sheets.google.com](https://sheets.google.com) và tạo **Spreadsheet mới**
-2. Đặt tên: `Bếp Của Mẹ - Quản lý`
-3. Để nguyên — script sẽ tự tạo các sheet **"Tài khoản"** và **"Đơn hàng"** lần đầu chạy
+### 2.1 Tạo project
+1. Vào [supabase.com](https://supabase.com) → **New project**
+2. Đặt tên: `bepcuame` → chọn region **Southeast Asia (Singapore)**
+3. Đặt database password (lưu lại)
 
----
+### 2.2 Tạo bảng
+1. Vào **SQL Editor** trong dashboard Supabase
+2. Copy toàn bộ nội dung file `supabase-setup.sql` → paste → nhấn **Run**
+3. Kết quả: tạo 2 bảng **users** và **orders** kèm RLS policies
 
-## Bước 2 — Gắn Apps Script vào Sheet
+### 2.3 Lấy API keys
+Vào **Settings → API**:
 
-1. Trong Spreadsheet, vào menu **Extensions → Apps Script**
-2. Xóa toàn bộ code mặc định trong editor
-3. Copy toàn bộ nội dung file `google-apps-script.js` và dán vào
-4. **Quan trọng**: Sửa dòng đầu:
-   ```js
-   const OWNER_EMAIL = 'your-email@gmail.com';
-   ```
-   → Đổi thành **email Gmail của bạn** (sẽ nhận thông báo đơn hàng)
-5. Nhấn **Save** (Ctrl+S) → đặt tên project: `BepCuaMe`
+| Giá trị | Tên trường |
+|---|---|
+| Project URL | `https://xxxx.supabase.co` |
+| anon public | key dài bắt đầu bằng `eyJ...` |
 
----
-
-## Bước 3 — Deploy Web App
-
-1. Nhấn nút **Deploy → New deployment**
-2. Cấu hình:
-   - **Type**: `Web app`
-   - **Description**: `v1`
-   - **Execute as**: `Me` (tài khoản của bạn)
-   - **Who has access**: `Anyone` ← bắt buộc để website gọi được
-3. Nhấn **Deploy**
-4. Google sẽ yêu cầu **Authorize access** → nhấn **Review permissions → Allow**
-5. Sau khi deploy xong, copy **Web app URL** có dạng:
-   ```
-   https://script.google.com/macros/s/AKfycb.../exec
-   ```
-
----
-
-## Bước 4 — Gắn URL vào Website
-
-Mở file `script.js`, tìm dòng:
-
+### 2.4 Gắn vào website
+Mở `script.js`, tìm và điền:
 ```js
-const WEBHOOK_URL = ''; // ← ví dụ: 'https://script.google.com/macros/s/AKfy.../exec'
+const SUPABASE_URL      = 'https://xxxx.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGci...';
+```
+Sau đó `git push` để deploy.
+
+### Xem dữ liệu
+- Vào **Table Editor** trong Supabase dashboard
+- Bảng **users**: danh sách tài khoản khách hàng
+- Bảng **orders**: tất cả đơn hàng
+
+---
+
+## Phần 3 — Thanh toán MoMo / VNPay
+
+### 3.1 Cài Supabase CLI
+```bash
+npm install -g supabase
+supabase login
 ```
 
-Dán URL vào trong dấu nháy:
-
-```js
-const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycb.../exec';
+### 3.2 Liên kết project
+```bash
+cd d:/snack-shop
+supabase link --project-ref xxxx   # lấy ref trong URL dashboard
 ```
 
-Lưu file → xong!
+### 3.3 Thêm biến môi trường cho Edge Functions
+```bash
+# MoMo (lấy từ business.momo.vn sau khi đăng ký merchant)
+supabase secrets set MOMO_PARTNER_CODE=your_partner_code
+supabase secrets set MOMO_ACCESS_KEY=your_access_key
+supabase secrets set MOMO_SECRET_KEY=your_secret_key
+supabase secrets set MOMO_ENDPOINT=https://payment.momo.vn   # production
+
+# VNPay (lấy từ vnpay.vn sau khi đăng ký merchant)
+supabase secrets set VNP_TMN_CODE=your_tmn_code
+supabase secrets set VNP_HASH_SECRET=your_hash_secret
+supabase secrets set VNP_URL=https://pay.vnpay.vn/vpcpay.html   # production
+
+# URL website
+supabase secrets set SITE_URL=https://bepcuame.vercel.app
+```
+
+### 3.4 Deploy Edge Functions
+```bash
+supabase functions deploy momo-pay
+supabase functions deploy vnpay-pay
+```
+
+> **Lưu ý:** Hiện tại đang dùng credentials sandbox (test).
+> Để nhận tiền thật cần đăng ký merchant tại:
+> - MoMo: [business.momo.vn](https://business.momo.vn)
+> - VNPay: [vnpay.vn](https://vnpay.vn) → mục đối tác
 
 ---
 
-## Bước 5 — Kiểm tra
+## Phần 4 — GitHub Actions (CI/CD)
 
-1. Mở website, thử **Đăng ký** tài khoản mới
-2. Kiểm tra Google Sheet → sheet **"Tài khoản"** phải có dòng mới
-3. Thêm hàng vào giỏ → đặt hàng
-4. Kiểm tra sheet **"Đơn hàng"** + hộp thư Gmail của bạn
+Workflow đã hoạt động tại: **github.com/lken18419-maker/bepcuame/actions**
 
----
+### Secrets đã cấu hình
+| Secret | Mô tả |
+|---|---|
+| `VERCEL_TOKEN` | Token xác thực Vercel |
+| `VERCEL_ORG_ID` | `team_dEoQJq0g0QWmhudblcNJIzzp` |
+| `VERCEL_PROJECT_ID` | `prj_kSNg57w98BOdYIwy6Nos9sqw098v` |
 
-## Cập nhật code sau này
-
-Mỗi khi sửa `google-apps-script.js`:
-1. Paste code mới vào Apps Script editor
-2. **Deploy → Manage deployments → Edit (bút chì) → New version → Deploy**
-3. URL không thay đổi, không cần sửa `script.js` lại
-
----
-
-## Cấu trúc Sheet
-
-### Sheet "Tài khoản"
-| ID | Họ tên | SĐT | Password Hash | Tổng chi tiêu | Hạng | Số đơn | Ngày đăng ký |
-|---|---|---|---|---|---|---|---|
-
-### Sheet "Đơn hàng"
-| Thời gian | Mã đơn | Tên KH | SĐT | Địa chỉ | Tỉnh/TP | Sản phẩm | Tạm tính | Giảm giá | Phí ship | Tổng tiền | Thanh toán | Ghi chú | Trạng thái |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+### Gia hạn token Vercel (khi hết hạn)
+1. Vào [vercel.com/account/tokens](https://vercel.com/account/tokens) → **Create**
+2. Cập nhật secret `VERCEL_TOKEN` trong GitHub repo
 
 ---
 
-## Lưu ý bảo mật
+## Phần 5 — Tên miền riêng (tuỳ chọn)
 
-- Password được hash bằng thuật toán djb2 trước khi lưu (không lưu plain text)
-- URL Web App là public — ai có URL đều gọi được API; bảo vệ bằng cách không chia sẻ URL
-- Không deploy với quyền "Anyone with Google account" để tránh bị giới hạn quota
+Khi đã mua domain `bepcuame.com`:
+
+```bash
+vercel domains add bepcuame.com
+```
+
+Sau đó vào trang quản lý DNS của nhà đăng ký domain, thêm:
+
+| Type | Name | Value |
+|---|---|---|
+| `A` | `@` | `76.76.21.21` |
+| `CNAME` | `www` | `cname.vercel-dns.com` |
+
+---
+
+## Tóm tắt nhanh — việc cần làm để go live
+
+- [x] Deploy Vercel → **bepcuame.vercel.app**
+- [x] GitHub Actions tự động deploy khi push
+- [ ] Tạo Supabase project + chạy `supabase-setup.sql`
+- [ ] Điền `SUPABASE_URL` và `SUPABASE_ANON_KEY` vào `script.js`
+- [ ] Đăng ký merchant MoMo / VNPay (để nhận thanh toán thật)
+- [ ] Deploy Supabase Edge Functions (momo-pay, vnpay-pay)
+- [ ] Mua domain `bepcuame.com` và gắn vào Vercel
