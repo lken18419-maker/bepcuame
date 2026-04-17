@@ -569,6 +569,29 @@ let currentCategory = 'all';
 let currentSearch = '';
 let wishlist = new Set();
 
+// ===== LOAD SẢN PHẨM TỪ SUPABASE =====
+async function loadProducts() {
+  if (!_sb) { renderProducts(products); return; }
+  const { data, error } = await _sb.from('products').select('*').eq('active', true).order('id');
+  if (error || !data?.length) { renderProducts(products); return; } // fallback hardcode
+  // Map cột Supabase → định dạng hiện tại
+  products = data.map(p => ({
+    id:        p.id,
+    name:      p.name,
+    emoji:     p.emoji || '🍱',
+    img:       p.img || null,
+    category:  p.category || 'other',
+    price:     Number(p.price),
+    oldPrice:  p.old_price ? Number(p.old_price) : null,
+    badge:     p.badge || null,
+    badge_type:p.badge_type || '',
+    origin:    p.origin || '',
+    rating:    Number(p.rating) || 5.0,
+    reviews:   Number(p.reviews) || 0,
+  }));
+  renderProducts(products);
+}
+
 // ===== RENDER PRODUCTS =====
 function renderStars(rating) {
   const full = Math.floor(rating);
@@ -1006,7 +1029,7 @@ function closeMobileNav() {
 }
 
 // ===== INIT =====
-renderProducts(products);
+loadProducts();
 updateCartUI();
 updateHeaderUser();
 
