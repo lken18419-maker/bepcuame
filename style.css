@@ -912,6 +912,12 @@ footer { background: var(--black); padding: 48px 24px 28px; }
 
 .auth-switch { text-align: center; font-size: 0.82rem; color: var(--text-muted); margin-top: 16px; }
 .auth-switch a { color: var(--red); font-weight: 700; }
+.auth-forgot-link { font-size: 0.8rem; color: rgba(255,255,255,0.4); text-decoration: none; }
+.auth-forgot-link:hover { color: var(--amber); }
+.forgot-header { margin-bottom: 16px; }
+.forgot-back { background: none; border: none; color: rgba(255,255,255,0.5); cursor: pointer; font-size: 0.85rem; padding: 0; }
+.forgot-back:hover { color: #fff; }
+.forgot-back i { margin-right: 6px; }
 
 /* ============================================
    PROFILE PANEL

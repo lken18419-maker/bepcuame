@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://js.stripe.com/v3/"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
@@ -521,7 +522,12 @@
       <label><i class="fa fa-lock"></i> Mật khẩu</label>
       <input type="password" id="loginPass" placeholder="••••••••" required/>
     </div>
-    <button type="submit" class="btn-primary w-full" style="margin-top:18px">
+    <div style="text-align:right;margin-top:-4px;margin-bottom:4px">
+      <a href="#" class="auth-forgot-link" onclick="event.preventDefault();switchAuthTab('forgot')">
+        Quên mật khẩu?
+      </a>
+    </div>
+    <button type="submit" class="btn-primary w-full" style="margin-top:14px">
       Đăng nhập <i class="fa fa-arrow-right"></i>
     </button>
     <p class="auth-switch">Chưa có tài khoản?
@@ -540,6 +546,10 @@
       <input type="tel" id="regPhone" placeholder="0909 xxx xxx" pattern="[0-9]{10}" maxlength="10" required/>
     </div>
     <div class="auth-field">
+      <label><i class="fa fa-envelope"></i> Email</label>
+      <input type="email" id="regEmail" placeholder="example@gmail.com" required/>
+    </div>
+    <div class="auth-field">
       <label><i class="fa fa-lock"></i> Mật khẩu</label>
       <input type="password" id="regPass" placeholder="Ít nhất 6 ký tự" required/>
     </div>
@@ -554,6 +564,32 @@
       <a href="#" onclick="event.preventDefault();switchAuthTab('login')">Đăng nhập</a>
     </p>
   </form>
+
+  <!-- Quên mật khẩu -->
+  <div id="forgotForm" style="display:none">
+    <div class="forgot-header">
+      <button class="forgot-back" onclick="switchAuthTab('login')">
+        <i class="fa fa-arrow-left"></i> Quay lại
+      </button>
+      <p style="margin:12px 0 4px;font-size:0.9rem;color:rgba(255,255,255,0.6)">
+        Nhập số điện thoại đã đăng ký — chúng tôi sẽ gửi link đặt lại mật khẩu về email của bạn.
+      </p>
+    </div>
+    <form onsubmit="submitForgotPassword(event)">
+      <div class="auth-field">
+        <label><i class="fa fa-phone"></i> Số điện thoại</label>
+        <input type="tel" id="fpPhone" placeholder="0909 xxx xxx" pattern="[0-9]{10}" maxlength="10" required/>
+      </div>
+      <button type="submit" class="btn-primary w-full" style="margin-top:18px" id="fpBtn">
+        Gửi link đặt lại <i class="fa fa-paper-plane"></i>
+      </button>
+    </form>
+    <div id="fpSuccess" style="display:none;text-align:center;padding:16px 0">
+      <div style="font-size:2.5rem">📧</div>
+      <p style="color:#00D4A0;font-weight:700;margin:8px 0 4px">Đã gửi email!</p>
+      <p style="font-size:0.85rem;color:rgba(255,255,255,0.5)">Kiểm tra hộp thư (kể cả Spam) và nhấn link để đặt lại mật khẩu.</p>
+    </div>
+  </div>
 </div>
 
 <!-- ====== PROFILE PANEL ====== -->

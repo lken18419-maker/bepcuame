@@ -8,11 +8,20 @@ create table if not exists users (
   id            text primary key,
   name          text not null,
   phone         text unique not null,
+  email         text,
   password_hash text not null,
   total_spent   numeric default 0,
   tier          text default 'member',
   order_count   integer default 0,
   created_at    timestamptz default now()
+);
+
+-- 3b. Bảng token đặt lại mật khẩu
+create table if not exists password_resets (
+  phone      text primary key,
+  token      text not null,
+  expires_at timestamptz not null,
+  created_at timestamptz default now()
 );
 
 -- 2. Bảng đơn hàng

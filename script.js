@@ -185,9 +185,15 @@ const _sb = (SUPABASE_URL && SUPABASE_ANON_KEY)
   : null;
 
 // ===== STRIPE PAYMENT =====
-// Tạo tài khoản tại stripe.com → Developers → API keys → Publishable key
 const STRIPE_PUB_KEY = ''; // ← 'pk_live_...' hoặc 'pk_test_...'
 const _stripe = STRIPE_PUB_KEY ? window.Stripe(STRIPE_PUB_KEY) : null;
+
+// ===== EMAILJS (gửi email quên mật khẩu) =====
+// Đăng ký tại emailjs.com → lấy 3 giá trị bên dưới
+const EMAILJS_PUBLIC_KEY  = ''; // ← Account → API Keys → Public Key
+const EMAILJS_SERVICE_ID  = ''; // ← Email Services → Service ID
+const EMAILJS_TEMPLATE_ID = ''; // ← Email Templates → Template ID
+if (EMAILJS_PUBLIC_KEY) window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
 
 // ===== USER STORAGE =====
 function getUsers()       { return JSON.parse(localStorage.getItem('bcm_users') || '{}'); }
@@ -208,7 +214,7 @@ function simpleHash(str) {
   return (h >>> 0).toString(36);
 }
 
-async function authRegister(name, phone, password) {
+async function authRegister(name, phone, email, password) {
   const hash = simpleHash(password);
   const id   = 'u_' + phone.replace(/\D/g, '');
 
@@ -217,7 +223,7 @@ async function authRegister(name, phone, password) {
     const { data: existing } = await _sb.from('users').select('id').eq('phone', phone).maybeSingle();
     if (existing) return { ok: false, msg: 'Số điện thoại đã được đăng ký!' };
     const { error } = await _sb.from('users').insert({
-      id, name, phone, password_hash: hash,
+      id, name, phone, email, password_hash: hash,
       total_spent: 0, tier: 'member', order_count: 0,
     });
     if (error) return { ok: false, msg: 'Lỗi đăng ký, thử lại!' };
@@ -225,14 +231,14 @@ async function authRegister(name, phone, password) {
     // 2. Fallback: localStorage
     const users = getUsers();
     if (users[id]) return { ok: false, msg: 'Số điện thoại đã được đăng ký!' };
-    users[id] = { id, name, phone, password: hash,
+    users[id] = { id, name, phone, email, password: hash,
                   totalSpent: 0, orders: [], createdAt: new Date().toISOString() };
     saveUsers(users);
   }
 
   // Cache session
   const users = getUsers();
-  users[id] = { id, name, phone, password: hash,
+  users[id] = { id, name, phone, email, password: hash,
                 totalSpent: 0, orders: [], createdAt: new Date().toISOString() };
   saveUsers(users);
   setCurrentUser(id);
@@ -360,10 +366,14 @@ function closeAuthModal() {
 }
 function switchAuthTab(tab) {
   document.querySelectorAll('.auth-tab').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.auth-tab[data-tab="${tab}"]`).classList.add('active');
-  document.getElementById('loginForm').style.display  = tab === 'login'    ? '' : 'none';
+  const activeTab = document.querySelector(`.auth-tab[data-tab="${tab}"]`);
+  if (activeTab) activeTab.classList.add('active');
+  document.getElementById('loginForm').style.display    = tab === 'login'    ? '' : 'none';
   document.getElementById('registerForm').style.display = tab === 'register' ? '' : 'none';
+  document.getElementById('forgotForm').style.display   = tab === 'forgot'   ? '' : 'none';
   document.getElementById('authError').textContent = '';
+  // Ẩn tabs khi vào forgot
+  document.querySelector('.auth-tabs').style.display = tab === 'forgot' ? 'none' : '';
 }
 function validatePhone(phone) {
   return /^[0-9]{10}$/.test(phone);
@@ -400,20 +410,89 @@ async function submitRegister(e) {
 
   const name  = document.getElementById('regName').value.trim();
   const phone = document.getElementById('regPhone').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
   const pass  = document.getElementById('regPass').value;
   const pass2 = document.getElementById('regPass2').value;
   if (!validatePhone(phone)) { errEl.textContent = 'Số điện thoại phải đúng 10 chữ số!'; return; }
+  if (!email)                { errEl.textContent = 'Vui lòng nhập email!'; return; }
   if (pass.length < 6)       { errEl.textContent = 'Mật khẩu ít nhất 6 ký tự!'; return; }
   if (pass !== pass2)        { errEl.textContent = 'Mật khẩu xác nhận không khớp!'; return; }
 
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang đăng ký…'; }
-  const res = await authRegister(name, phone, pass);
+  const res = await authRegister(name, phone, email, pass);
   if (btn) { btn.disabled = false; btn.innerHTML = origHTML; }
 
   if (!res.ok) { errEl.textContent = res.msg; return; }
   closeAuthModal();
   updateHeaderUser();
   showToast('🎉 Đăng ký thành công! Chào mừng bạn!');
+}
+
+// ===== FORGOT PASSWORD =====
+async function submitForgotPassword(e) {
+  e.preventDefault();
+  const phone = document.getElementById('fpPhone').value.trim();
+  const btn   = document.getElementById('fpBtn');
+  if (!validatePhone(phone)) { showToast('⚠️ Số điện thoại phải đúng 10 chữ số!'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang gửi…';
+
+  // Tìm email theo SĐT
+  let email = null;
+  if (_sb) {
+    const { data } = await _sb.from('users').select('email').eq('phone', phone).maybeSingle();
+    email = data?.email;
+  } else {
+    const users = getUsers();
+    const id = 'u_' + phone.replace(/\D/g, '');
+    email = users[id]?.email;
+  }
+
+  if (!email) {
+    showToast('❌ Không tìm thấy tài khoản với số điện thoại này!');
+    btn.disabled = false;
+    btn.innerHTML = 'Gửi link đặt lại <i class="fa fa-paper-plane"></i>';
+    return;
+  }
+
+  // Tạo reset token (ngẫu nhiên)
+  const token  = Math.random().toString(36).slice(2) + Date.now().toString(36);
+  const expiry = Date.now() + 30 * 60 * 1000; // hết hạn sau 30 phút
+  const resetUrl = `${location.origin}/password-reset.html?phone=${phone}&token=${token}`;
+
+  // Lưu token
+  if (_sb) {
+    await _sb.from('password_resets').upsert({ phone, token, expires_at: new Date(expiry).toISOString() });
+  } else {
+    localStorage.setItem('bcm_reset_' + phone, JSON.stringify({ token, expiry }));
+  }
+
+  // Gửi email qua EmailJS
+  if (EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID) {
+    try {
+      await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_email:  email,
+        to_phone:  phone,
+        reset_url: resetUrl,
+        shop_name: 'Bếp Của Mẹ',
+      });
+    } catch (err) {
+      console.warn('EmailJS error:', err);
+      showToast('❌ Lỗi gửi email, kiểm tra lại cấu hình EmailJS!');
+      btn.disabled = false;
+      btn.innerHTML = 'Gửi link đặt lại <i class="fa fa-paper-plane"></i>';
+      return;
+    }
+  } else {
+    // Chưa cấu hình EmailJS — log ra console để test
+    console.info('Reset URL (dev):', resetUrl);
+    showToast('⚠️ EmailJS chưa cấu hình — xem Console để lấy link reset');
+  }
+
+  // Hiện thành công
+  document.querySelector('#forgotForm form').style.display = 'none';
+  document.getElementById('fpSuccess').style.display = '';
 }
 
 // ===== PROFILE PANEL =====
