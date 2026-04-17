@@ -188,12 +188,7 @@ const _sb = (SUPABASE_URL && SUPABASE_ANON_KEY)
 const STRIPE_PUB_KEY = ''; // ← 'pk_live_...' hoặc 'pk_test_...'
 const _stripe = STRIPE_PUB_KEY ? window.Stripe(STRIPE_PUB_KEY) : null;
 
-// ===== EMAILJS (gửi email quên mật khẩu) =====
-// Đăng ký tại emailjs.com → lấy 3 giá trị bên dưới
-const EMAILJS_PUBLIC_KEY  = ''; // ← Account → API Keys → Public Key
-const EMAILJS_SERVICE_ID  = ''; // ← Email Services → Service ID
-const EMAILJS_TEMPLATE_ID = ''; // ← Email Templates → Template ID
-if (EMAILJS_PUBLIC_KEY) window.emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+// Email reset dùng Supabase Edge Function + Resend (cấu hình qua supabase secrets)
 
 // ===== USER STORAGE =====
 function getUsers()       { return JSON.parse(localStorage.getItem('bcm_users') || '{}'); }
@@ -468,26 +463,26 @@ async function submitForgotPassword(e) {
     localStorage.setItem('bcm_reset_' + phone, JSON.stringify({ token, expiry }));
   }
 
-  // Gửi email qua EmailJS
-  if (EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID) {
+  // Gửi email qua Supabase Edge Function (Resend)
+  if (_sb) {
     try {
-      await window.emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        to_email:  email,
-        to_phone:  phone,
-        reset_url: resetUrl,
-        shop_name: 'Bếp Của Mẹ',
+      // Lấy tên user để ghi vào email
+      const { data: u } = await _sb.from('users').select('name').eq('phone', phone).maybeSingle();
+      const { error } = await _sb.functions.invoke('send-reset-email', {
+        body: { to_email: email, to_name: u?.name ?? '', reset_url: resetUrl },
       });
+      if (error) throw error;
     } catch (err) {
-      console.warn('EmailJS error:', err);
-      showToast('❌ Lỗi gửi email, kiểm tra lại cấu hình EmailJS!');
+      console.warn('Send email error:', err);
+      showToast('❌ Lỗi gửi email! Kiểm tra Supabase Edge Function.');
       btn.disabled = false;
       btn.innerHTML = 'Gửi link đặt lại <i class="fa fa-paper-plane"></i>';
       return;
     }
   } else {
-    // Chưa cấu hình EmailJS — log ra console để test
-    console.info('Reset URL (dev):', resetUrl);
-    showToast('⚠️ EmailJS chưa cấu hình — xem Console để lấy link reset');
+    // Chưa kết nối Supabase — hiện link trong Console để test
+    console.info('%c[DEV] Reset URL:', 'color:#FF6B2B;font-weight:bold', resetUrl);
+    showToast('⚠️ Chưa kết nối Supabase — xem Console để lấy link reset');
   }
 
   // Hiện thành công
