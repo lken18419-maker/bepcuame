@@ -177,8 +177,8 @@ function getNextTier(totalSpent) {
 
 // ===== SUPABASE BACKEND =====
 // Tạo project tại supabase.com → Settings → API → dán vào đây
-const SUPABASE_URL      = ''; // ← 'https://xxxx.supabase.co'
-const SUPABASE_ANON_KEY = ''; // ← 'eyJhbGciOiJIUzI1NiIs...'
+const SUPABASE_URL      = 'https://iupxywqjwichfkhfurmu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_ZCEiZAW29XvclKz7xCoTSQ_5ctA7wVN';
 
 const _sb = (SUPABASE_URL && SUPABASE_ANON_KEY)
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
