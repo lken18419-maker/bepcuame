@@ -3,12 +3,69 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bếp Của Mẹ - Đồ Ăn Vặt Giao Hàng Tận Nơi</title>
+  <title>Bếp Của Mẹ - Đồ Ăn Vặt Ngon Giao Hàng Tận Nơi</title>
+
+  <!-- SEO cơ bản -->
+  <meta name="description" content="Bếp Của Mẹ – Đặt đồ ăn vặt ngon, tươi mới, chuẩn vị nhà làm. Giao hàng toàn quốc, miễn phí ship đơn từ 700.000đ. Chips, snack, kẹo, nước uống và hơn 100 món."/>
+  <meta name="keywords" content="đồ ăn vặt, ăn vặt ngon, snack, chips, kẹo, đặt đồ ăn vặt online, giao hàng đồ ăn vặt, bếp của mẹ, bepcuame"/>
+  <meta name="author" content="Bếp Của Mẹ"/>
+  <meta name="robots" content="index, follow"/>
+  <link rel="canonical" href="https://bepcuame.vercel.app/"/>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+  <link rel="shortcut icon" href="favicon.svg"/>
+
+  <!-- Open Graph (Facebook, Zalo) -->
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://bepcuame.vercel.app/"/>
+  <meta property="og:title" content="Bếp Của Mẹ - Đồ Ăn Vặt Ngon Giao Hàng Tận Nơi"/>
+  <meta property="og:description" content="Đặt đồ ăn vặt ngon, tươi mới, chuẩn vị nhà làm. Giao hàng toàn quốc, miễn phí ship đơn từ 700.000đ."/>
+  <meta property="og:image" content="https://bepcuame.vercel.app/images/og-banner.svg"/>
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta property="og:locale" content="vi_VN"/>
+  <meta property="og:site_name" content="Bếp Của Mẹ"/>
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="Bếp Của Mẹ - Đồ Ăn Vặt Ngon Giao Hàng Tận Nơi"/>
+  <meta name="twitter:description" content="Đặt đồ ăn vặt ngon, tươi mới, chuẩn vị nhà làm. Giao hàng toàn quốc, miễn phí ship đơn từ 700.000đ."/>
+  <meta name="twitter:image" content="https://bepcuame.vercel.app/images/og-banner.svg"/>
+
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FoodEstablishment",
+    "name": "Bếp Của Mẹ",
+    "description": "Đồ ăn vặt ngon, tươi mới, chuẩn vị nhà làm. Giao hàng toàn quốc.",
+    "url": "https://bepcuame.vercel.app",
+    "logo": "https://bepcuame.vercel.app/images/logo.png",
+    "telephone": "+84937895520",
+    "servesCuisine": "Vietnamese Snacks",
+    "priceRange": "₫₫",
+    "sameAs": [
+      "https://www.facebook.com/bepcuame.anvat",
+      "https://www.instagram.com/bepcuame/",
+      "https://www.tiktok.com/@bepcuame.anvat",
+      "https://zalo.me/0937895520"
+    ]
+  }
+  </script>
+  <!-- Preconnect: giảm DNS lookup time -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net"/>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com"/>
+  <link rel="preconnect" href="https://iupxywqjwichfkhfurmu.supabase.co"/>
+
   <link rel="stylesheet" href="style.css"/>
+  <!-- font-display=swap: tránh text ẩn khi chờ font -->
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://js.stripe.com/v3/"></script>
+
+  <!-- defer: không chặn render HTML -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 
@@ -126,22 +183,6 @@
   </div>
 </section>
 
-<!-- ====== PROMO BANNER ====== -->
-<div class="promo-section">
-  <div class="promo-banner">
-    <div class="promo-content">
-      <div class="promo-tag">🔥 Ưu đãi đặc biệt</div>
-      <h2>Mua 3 tặng 1 <em>miễn phí</em></h2>
-      <p>Áp dụng cho tất cả đơn hàng từ 3 món trở lên. Đặt ngay hôm nay – số lượng có hạn!</p>
-      <a href="#products" class="btn-primary">Đặt hàng ngay <i class="fa fa-arrow-right"></i></a>
-    </div>
-    <div class="promo-visual">
-      <div class="promo-emoji-card">🍟</div>
-      <div class="promo-emoji-card big">🍱</div>
-      <div class="promo-emoji-card">🧃</div>
-    </div>
-  </div>
-</div>
 
 <!-- ====== ABOUT ====== -->
 <section class="about-section" id="about">
@@ -428,6 +469,12 @@
         <a href="https://www.facebook.com/bepcuame.anvat" target="_blank"><i class="fab fa-facebook-f"></i></a>
         <a href="https://www.instagram.com/bepcuame/" target="_blank"><i class="fab fa-instagram"></i></a>
         <a href="https://www.tiktok.com/@bepcuame.anvat" target="_blank"><i class="fab fa-tiktok"></i></a>
+        <a href="https://zalo.me/0937895520" target="_blank" title="Zalo" style="display:inline-flex;align-items:center;justify-content:center;">
+          <svg width="1.1em" height="1.1em" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;">
+            <rect width="50" height="50" rx="10" fill="#0068FF"/>
+            <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Arial,sans-serif" font-weight="900" font-size="18" letter-spacing="-0.5">Zalo</text>
+          </svg>
+        </a>
       </div>
     </div>
     <div class="footer-col">
@@ -718,6 +765,6 @@
 <!-- ====== TOAST ====== -->
 <div class="toast" id="toast"></div>
 
-<script src="script.js"></script>
+<script defer src="script.js"></script>
 </body>
 </html>

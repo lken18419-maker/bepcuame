@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Không index các trang nội bộ
+Disallow: /supabase/
+Disallow: /.github/
+
+Sitemap: https://bepcuame.vercel.app/sitemap.xml
