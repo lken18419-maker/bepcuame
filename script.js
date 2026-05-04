@@ -547,7 +547,7 @@ async function loadProducts() {
     id:              p.id,
     name:            p.name,
     emoji:           p.emoji || '🍱',
-    img:             p.img || null,
+    img:             p.image || p.img || null,
     category:        p.category || 'other',
     price:           Number(p.price),
     wholesale_price: p.wholesale_price ? Number(p.wholesale_price) : Math.round(Number(p.price) * 0.8),
