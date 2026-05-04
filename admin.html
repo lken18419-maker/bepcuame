@@ -208,6 +208,10 @@
     .toggle-btn.active-btn:hover { background: var(--danger); color: #fff; }
     .toggle-btn.inactive-btn { border-color: var(--green); color: var(--green); background: #fff; }
     .toggle-btn.inactive-btn:hover { background: var(--green); color: #fff; }
+    .edit-btn { padding: .3rem .65rem; border: 1.5px solid var(--info); border-radius: 6px; font-size: .78rem; font-family: inherit; cursor: pointer; font-weight: 600; color: var(--info); background: #fff; transition: all .15s; }
+    .edit-btn:hover { background: var(--info); color: #fff; }
+    .delete-btn { padding: .3rem .65rem; border: 1.5px solid #e53e3e; border-radius: 6px; font-size: .78rem; font-family: inherit; cursor: pointer; font-weight: 600; color: #e53e3e; background: #fff; transition: all .15s; }
+    .delete-btn:hover { background: #e53e3e; color: #fff; }
 
     /* Product image upload */
     .img-cell { display: flex; align-items: center; gap: 6px; }
@@ -450,7 +454,7 @@
 <!-- MODAL THÊM SẢN PHẨM -->
 <div class="modal-overlay" id="addModal" onclick="if(event.target===this)closeAddModal()">
   <div class="modal-box">
-    <div class="modal-title">➕ Thêm sản phẩm mới</div>
+    <div class="modal-title" id="modal-title">➕ Thêm sản phẩm mới</div>
     <div class="modal-grid">
       <div class="modal-field full">
         <label>Tên sản phẩm *</label>
@@ -514,9 +518,10 @@
         <span style="font-size:.75rem;color:var(--muted)">Tối đa 5MB · JPG, PNG, WebP</span>
       </div>
     </div>
+    <input type="hidden" id="edit-product-id" value="" />
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeAddModal()">Huỷ</button>
-      <button class="btn-save" onclick="saveNewProduct()">💾 Lưu sản phẩm</button>
+      <button class="btn-save" id="modal-save-btn" onclick="saveNewProduct()">💾 Lưu sản phẩm</button>
     </div>
   </div>
 </div>
@@ -839,10 +844,12 @@
               : '<span class="badge badge-done">Hiện</span>'}</td>
             <td style="white-space:nowrap;display:flex;gap:.4rem;align-items:center;flex-wrap:wrap">
               <button class="save-price-btn" onclick="saveProductPrice(${p.id})">💾 Lưu giá</button>
+              <button class="edit-btn" onclick="openEditModal(${p.id})">✏️ Sửa</button>
               <button class="toggle-btn ${p.active===false?'inactive-btn':'active-btn'}"
                 id="ptoggle-${p.id}" onclick="toggleProduct(${p.id}, ${p.active !== false})">
                 ${p.active === false ? '👁 Hiện' : '🚫 Ẩn'}
               </button>
+              <button class="delete-btn" onclick="deleteProduct(${p.id}, '${p.name.replace(/'/g,"\\'")}')">🗑 Xóa</button>
             </td>
           </tr>`).join('')}
         </tbody>
@@ -928,11 +935,42 @@
     document.getElementById('new-stock').value = '';
     document.getElementById('new-img-file').value = '';
     document.getElementById('new-img-preview').style.display = 'none';
+    document.getElementById('edit-product-id').value = '';
+    document.getElementById('modal-title').textContent = '➕ Thêm sản phẩm mới';
+    document.getElementById('modal-save-btn').textContent = '💾 Lưu sản phẩm';
+    document.getElementById('addModal').classList.add('open');
+    setTimeout(() => document.getElementById('new-name').focus(), 150);
+  }
+  function openEditModal(id) {
+    const p = allProducts.find(x => x.id === id);
+    if (!p) return;
+    document.getElementById('new-name').value = p.name || '';
+    document.getElementById('new-category').value = p.category || '';
+    document.getElementById('new-price').value = p.price || '';
+    document.getElementById('new-wholesale').value = p.wholesale_price || '';
+    document.getElementById('new-stock').value = p.stock || '';
+    document.getElementById('new-desc').value = p.description || '';
+    document.getElementById('new-img-file').value = '';
+    document.getElementById('new-img-preview').style.display = p.image ? 'block' : 'none';
+    if (p.image) document.getElementById('new-img-thumb').src = p.image;
+    document.getElementById('edit-product-id').value = id;
+    document.getElementById('modal-title').textContent = '✏️ Sửa sản phẩm';
+    document.getElementById('modal-save-btn').textContent = '💾 Cập nhật';
     document.getElementById('addModal').classList.add('open');
     setTimeout(() => document.getElementById('new-name').focus(), 150);
   }
   function closeAddModal() {
     document.getElementById('addModal').classList.remove('open');
+  }
+  async function deleteProduct(id, name) {
+    if (!confirm(`Xóa sản phẩm "${name}"?\nThao tác này không thể hoàn tác.`)) return;
+    const { error } = await sb.from('products').delete().eq('id', id);
+    if (error) { toast('Lỗi xóa: ' + error.message, 'error'); return; }
+    allProducts = allProducts.filter(p => p.id !== id);
+    filteredProducts = filteredProducts.filter(p => p.id !== id);
+    renderProductsTable();
+    toast('Đã xóa sản phẩm "' + name + '"');
+    document.getElementById('s-products').textContent = allProducts.length;
   }
   function previewNewImage(input) {
     const file = input.files[0];
@@ -950,6 +988,8 @@
     if (!name) { toast('Vui lòng nhập tên sản phẩm', 'error'); return; }
     if (!price) { toast('Vui lòng nhập giá lẻ', 'error'); return; }
 
+    const editId = document.getElementById('edit-product-id').value;
+    const isEdit = !!editId;
     const wholesale = parseInt(document.getElementById('new-wholesale').value) || Math.round(price * 0.8);
     const payload = {
       name,
@@ -958,16 +998,19 @@
       wholesale_price: wholesale,
       description:     document.getElementById('new-desc').value.trim() || null,
       stock:           parseInt(document.getElementById('new-stock').value) || null,
-      active:          true,
-      rating:          4.5,
-      sold:            0,
     };
+    if (!isEdit) { payload.active = true; payload.rating = 4.5; payload.sold = 0; }
 
-    const btn = document.querySelector('#addModal .btn-save');
+    const btn = document.getElementById('modal-save-btn');
     btn.textContent = '⏳ Đang lưu...'; btn.disabled = true;
 
-    const { data, error } = await sb.from('products').insert(payload).select().single();
-    if (error) { btn.textContent = '💾 Lưu sản phẩm'; btn.disabled = false; toast('Lỗi: ' + error.message, 'error'); return; }
+    let data, error;
+    if (isEdit) {
+      ({ data, error } = await sb.from('products').update(payload).eq('id', editId).select().single());
+    } else {
+      ({ data, error } = await sb.from('products').insert(payload).select().single());
+    }
+    if (error) { btn.textContent = isEdit ? '💾 Cập nhật' : '💾 Lưu sản phẩm'; btn.disabled = false; toast('Lỗi: ' + error.message, 'error'); return; }
 
     // Upload ảnh nếu có
     const imgFile = document.getElementById('new-img-file').files[0];
@@ -992,14 +1035,19 @@
       }
     }
 
-    btn.textContent = '💾 Lưu sản phẩm'; btn.disabled = false;
+    btn.textContent = isEdit ? '💾 Cập nhật' : '💾 Lưu sản phẩm'; btn.disabled = false;
     allProducts = allProducts || [];
-    allProducts.push(data);
+    if (isEdit) {
+      const idx = allProducts.findIndex(p => p.id === data.id);
+      if (idx > -1) allProducts[idx] = data;
+    } else {
+      allProducts.push(data);
+    }
     filteredProducts = [...allProducts];
     renderProductsTable();
     closeAddModal();
-    toast('✅ Đã thêm sản phẩm "' + name + '"', 'success');
-    document.getElementById('s-products').textContent = allProducts.length;
+    toast(isEdit ? '✅ Đã cập nhật "' + name + '"' : '✅ Đã thêm "' + name + '"', 'success');
+    if (!isEdit) document.getElementById('s-products').textContent = allProducts.length;
   }
 
   /* INIT */
