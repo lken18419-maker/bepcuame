@@ -503,6 +503,16 @@
         <label>Mô tả</label>
         <textarea id="new-desc" placeholder="Mô tả ngắn về sản phẩm..."></textarea>
       </div>
+      <div class="modal-field full">
+        <label>Ảnh sản phẩm</label>
+        <div id="new-img-preview" style="display:none;margin-bottom:.5rem">
+          <img id="new-img-thumb" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1.5px solid var(--border)"/>
+        </div>
+        <input type="file" id="new-img-file" accept="image/jpeg,image/png,image/webp"
+          style="padding:.4rem;border:1.5px solid var(--border);border-radius:8px;font-size:.82rem;width:100%"
+          onchange="previewNewImage(this)"/>
+        <span style="font-size:.75rem;color:var(--muted)">Tối đa 5MB · JPG, PNG, WebP</span>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeAddModal()">Huỷ</button>
@@ -916,11 +926,23 @@
     document.getElementById('new-category').value = '';
     document.getElementById('new-price').value = '';
     document.getElementById('new-stock').value = '';
+    document.getElementById('new-img-file').value = '';
+    document.getElementById('new-img-preview').style.display = 'none';
     document.getElementById('addModal').classList.add('open');
     setTimeout(() => document.getElementById('new-name').focus(), 150);
   }
   function closeAddModal() {
     document.getElementById('addModal').classList.remove('open');
+  }
+  function previewNewImage(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('new-img-thumb').src = e.target.result;
+      document.getElementById('new-img-preview').style.display = 'block';
+    };
+    reader.readAsDataURL(file);
   }
   async function saveNewProduct() {
     const name = document.getElementById('new-name').value.trim();
@@ -945,11 +967,32 @@
     btn.textContent = '⏳ Đang lưu...'; btn.disabled = true;
 
     const { data, error } = await sb.from('products').insert(payload).select().single();
+    if (error) { btn.textContent = '💾 Lưu sản phẩm'; btn.disabled = false; toast('Lỗi: ' + error.message, 'error'); return; }
+
+    // Upload ảnh nếu có
+    const imgFile = document.getElementById('new-img-file').files[0];
+    if (imgFile) {
+      if (imgFile.size > 5 * 1024 * 1024) {
+        toast('⚠️ Ảnh quá lớn (>5MB) — sản phẩm đã lưu nhưng không có ảnh', 'error');
+      } else {
+        btn.textContent = '⏳ Đang upload ảnh...';
+        const ext  = imgFile.name.split('.').pop().toLowerCase();
+        const path = `product-${data.id}-${Date.now()}.${ext}`;
+        const { error: upErr } = await sb.storage.from('products').upload(path, imgFile, { upsert: true, contentType: imgFile.type });
+        if (upErr) {
+          if (upErr.message.includes('Bucket') || upErr.message.includes('bucket')) {
+            document.getElementById('bucket-guide').style.display = 'block';
+          }
+          toast('⚠️ Sản phẩm đã lưu nhưng lỗi upload ảnh: ' + upErr.message, 'error');
+        } else {
+          const { data: { publicUrl } } = sb.storage.from('products').getPublicUrl(path);
+          await sb.from('products').update({ image: publicUrl }).eq('id', data.id);
+          data.image = publicUrl;
+        }
+      }
+    }
 
     btn.textContent = '💾 Lưu sản phẩm'; btn.disabled = false;
-
-    if (error) { toast('Lỗi: ' + error.message, 'error'); return; }
-
     allProducts = allProducts || [];
     allProducts.push(data);
     filteredProducts = [...allProducts];
