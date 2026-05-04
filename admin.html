@@ -261,6 +261,41 @@
 
     .empty-state { padding: 2.5rem; text-align: center; color: var(--muted); font-size: .9rem; }
 
+    /* Modal thêm sản phẩm */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45);
+      z-index: 1000; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-box {
+      background: var(--card); border-radius: 16px; padding: 2rem;
+      width: 520px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,.3); transform: translateY(20px); transition: transform .2s;
+    }
+    .modal-overlay.open .modal-box { transform: translateY(0); }
+    .modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.2rem; color: var(--green); }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+    .modal-field { display: flex; flex-direction: column; gap: .3rem; }
+    .modal-field.full { grid-column: 1 / -1; }
+    .modal-field label { font-size: .8rem; font-weight: 600; color: var(--muted); }
+    .modal-field input, .modal-field select, .modal-field textarea {
+      padding: .55rem .8rem; border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: .88rem; font-family: inherit; outline: none; transition: border-color .2s;
+    }
+    .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus { border-color: var(--green); }
+    .modal-field textarea { resize: vertical; min-height: 70px; }
+    .modal-actions { display: flex; gap: .7rem; justify-content: flex-end; margin-top: 1.2rem; }
+    .btn-cancel { padding: .6rem 1.2rem; border: 1.5px solid var(--border); border-radius: 8px; background: #fff; font-family: inherit; font-size: .88rem; cursor: pointer; }
+    .btn-save { padding: .6rem 1.4rem; background: var(--green); color: #fff; border: none; border-radius: 8px; font-family: inherit; font-size: .88rem; font-weight: 600; cursor: pointer; }
+    .btn-save:hover { background: var(--green-dk); }
+    .add-product-btn {
+      padding: .55rem 1rem; background: var(--green); color: #fff; border: none;
+      border-radius: 8px; font-family: inherit; font-size: .85rem; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; gap: .4rem; white-space: nowrap;
+    }
+    .add-product-btn:hover { background: var(--green-dk); }
+
     /* Responsive */
     @media (max-width: 720px) {
       .sidebar { width: 60px; }
@@ -401,12 +436,77 @@
         <div class="table-wrap">
           <div class="table-toolbar">
             <input class="search-input" id="product-search" placeholder="🔍  Tìm sản phẩm..." oninput="filterProducts()" />
+            <button class="add-product-btn" onclick="openAddModal()"><i class="fa fa-plus"></i> Thêm sản phẩm</button>
           </div>
           <div id="products-body">
             <div class="loading"><i class="fa fa-spinner spin"></i> Đang tải...</div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL THÊM SẢN PHẨM -->
+<div class="modal-overlay" id="addModal" onclick="if(event.target===this)closeAddModal()">
+  <div class="modal-box">
+    <div class="modal-title">➕ Thêm sản phẩm mới</div>
+    <div class="modal-grid">
+      <div class="modal-field full">
+        <label>Tên sản phẩm *</label>
+        <input type="text" id="new-name" placeholder="VD: Bánh tráng trộn Tây Ninh" />
+      </div>
+      <div class="modal-field">
+        <label>Danh mục</label>
+        <select id="new-category">
+          <option value="">— Chọn danh mục —</option>
+          <option value="banh-trang">Bánh tráng</option>
+          <option value="bo">Bò khô / Bò lắc</option>
+          <option value="muc">Mực khô / Mực rim</option>
+          <option value="kho-ga">Gà khô / Gà lắc</option>
+          <option value="kho-heo">Heo khô / Da heo</option>
+          <option value="kho-bo">Bò sấy / Khô bò</option>
+          <option value="kho-ca">Cá khô / Cá sấy</option>
+          <option value="mut">Mứt & Ô mai</option>
+          <option value="keo">Kẹo & Bánh ngọt</option>
+          <option value="hat">Hạt rang</option>
+          <option value="chip">Snack chip giòn</option>
+          <option value="banh-gao">Bánh gạo / Bánh phồng</option>
+          <option value="banh-quy">Bánh quy / Bánh mặn</option>
+          <option value="chao">Cháo ăn liền</option>
+          <option value="pho">Phở / Bún / Mì ăn liền</option>
+          <option value="bun">Bún bò / Bún riêu</option>
+          <option value="sup">Súp / Cháo dinh dưỡng</option>
+          <option value="nuoc-ep">Nước ép trái cây</option>
+          <option value="sua">Sữa & Đồ uống sữa</option>
+          <option value="tra">Trà & Nước uống thảo mộc</option>
+          <option value="ca-phe">Cà phê đóng gói</option>
+          <option value="nuoc-ngot">Nước ngọt & Nước có ga</option>
+          <option value="dua-leo">Dưa leo dầm</option>
+          <option value="dua-cai">Dưa cải muối chua</option>
+          <option value="kim-chi">Kim chi & Đồ chua</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Tồn kho (hộp)</label>
+        <input type="number" id="new-stock" placeholder="VD: 100" min="0" />
+      </div>
+      <div class="modal-field">
+        <label>Giá lẻ (₫) *</label>
+        <input type="number" id="new-price" placeholder="VD: 35000" min="0" step="1000" />
+      </div>
+      <div class="modal-field">
+        <label>Giá sỉ (₫)</label>
+        <input type="number" id="new-wholesale" placeholder="Để trống = tự tính 80%" min="0" step="1000" />
+      </div>
+      <div class="modal-field full">
+        <label>Mô tả</label>
+        <textarea id="new-desc" placeholder="Mô tả ngắn về sản phẩm..."></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeAddModal()">Huỷ</button>
+      <button class="btn-save" onclick="saveNewProduct()">💾 Lưu sản phẩm</button>
     </div>
   </div>
 </div>
@@ -808,6 +908,55 @@
     btn.textContent = newActive ? '🚫 Ẩn' : '👁 Hiện';
     btn.setAttribute('onclick', `toggleProduct(${id}, ${newActive})`);
     toast(newActive ? 'Đã hiện sản phẩm' : 'Đã ẩn sản phẩm');
+  }
+
+  /* THÊM SẢN PHẨM MỚI */
+  function openAddModal() {
+    ['new-name','new-desc','new-wholesale'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('new-category').value = '';
+    document.getElementById('new-price').value = '';
+    document.getElementById('new-stock').value = '';
+    document.getElementById('addModal').classList.add('open');
+    setTimeout(() => document.getElementById('new-name').focus(), 150);
+  }
+  function closeAddModal() {
+    document.getElementById('addModal').classList.remove('open');
+  }
+  async function saveNewProduct() {
+    const name = document.getElementById('new-name').value.trim();
+    const price = parseInt(document.getElementById('new-price').value) || 0;
+    if (!name) { toast('Vui lòng nhập tên sản phẩm', 'error'); return; }
+    if (!price) { toast('Vui lòng nhập giá lẻ', 'error'); return; }
+
+    const wholesale = parseInt(document.getElementById('new-wholesale').value) || Math.round(price * 0.8);
+    const payload = {
+      name,
+      category:        document.getElementById('new-category').value || null,
+      price,
+      wholesale_price: wholesale,
+      description:     document.getElementById('new-desc').value.trim() || null,
+      stock:           parseInt(document.getElementById('new-stock').value) || null,
+      active:          true,
+      rating:          4.5,
+      sold:            0,
+    };
+
+    const btn = document.querySelector('#addModal .btn-save');
+    btn.textContent = '⏳ Đang lưu...'; btn.disabled = true;
+
+    const { data, error } = await sb.from('products').insert(payload).select().single();
+
+    btn.textContent = '💾 Lưu sản phẩm'; btn.disabled = false;
+
+    if (error) { toast('Lỗi: ' + error.message, 'error'); return; }
+
+    allProducts = allProducts || [];
+    allProducts.push(data);
+    filteredProducts = [...allProducts];
+    renderProductsTable();
+    closeAddModal();
+    toast('✅ Đã thêm sản phẩm "' + name + '"', 'success');
+    document.getElementById('s-products').textContent = allProducts.length;
   }
 
   /* INIT */
