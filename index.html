@@ -91,8 +91,9 @@
 
     <div class="header-actions">
       <div class="search-wrap">
-        <input type="text" id="searchInput" placeholder="Tìm món ăn vặt..." oninput="filterProducts()"/>
+        <input type="text" id="searchInput" placeholder="Tìm món ăn vặt..." oninput="filterProducts()" autocomplete="off" onblur="hideSearchSuggestions()"/>
         <i class="fa fa-search search-icon"></i>
+        <div class="search-suggestions" id="searchSuggestions"></div>
       </div>
 
       <!-- Nút đăng nhập (khi chưa đăng nhập) -->
@@ -172,12 +173,43 @@
       <p class="section-sub">Tất cả được chế biến tươi mới, đóng gói cẩn thận và giao tận nơi</p>
     </div>
     <div class="cat-filters">
-      <button class="cat-btn active" onclick="filterCategory('all', this)">🍽️ Tất cả</button>
-      <button class="cat-btn" onclick="filterCategory('chips', this)">🥔 Snack & Chips</button>
-      <button class="cat-btn" onclick="filterCategory('candy', this)">🍬 Bánh Kẹo</button>
-      <button class="cat-btn" onclick="filterCategory('drink', this)">🧃 Đồ Uống</button>
-      <button class="cat-btn" onclick="filterCategory('chocolate', this)">🍫 Socola</button>
-      <button class="cat-btn" onclick="filterCategory('biscuit', this)">🍪 Bánh Quy</button>
+      <button class="cat-btn active" onclick="filterCategory('all', this)">Tất cả</button>
+      <button class="cat-btn" onclick="filterCategory('banh-trang', this)">Bánh tráng</button>
+      <button class="cat-btn" onclick="filterCategory('bo', this)">Bò</button>
+      <button class="cat-btn" onclick="filterCategory('muc', this)">Mực</button>
+      <button class="cat-btn" onclick="filterCategory('ca', this)">Cá</button>
+      <button class="cat-btn" onclick="filterCategory('heo', this)">Heo</button>
+      <button class="cat-btn" onclick="filterCategory('ga', this)">Gà</button>
+      <button class="cat-btn" onclick="filterCategory('cha-bong', this)">Chả bông</button>
+      <button class="cat-btn" onclick="filterCategory('com-chay', this)">Cơm cháy</button>
+      <button class="cat-btn" onclick="filterCategory('mon-ngon-que-nha', this)">Món Ngon Quê Nhà</button>
+      <button class="cat-btn" onclick="filterCategory('me-xi-muoi', this)">Me - Xi Muối</button>
+      <button class="cat-btn" onclick="filterCategory('trai-cay-say', this)">Trái cây sấy - rim - muối ớt</button>
+      <button class="cat-btn" onclick="filterCategory('rong-bien', this)">Rong biển</button>
+      <button class="cat-btn" onclick="filterCategory('nhap-khau', this)">Đồ ăn vặt NHẬP KHẨU</button>
+      <button class="cat-btn" onclick="filterCategory('tra-nuoc', this)">Trà - Nước giải nhiệt</button>
+      <button class="cat-btn" onclick="filterCategory('keo', this)">Kẹo</button>
+      <button class="cat-btn" onclick="filterCategory('banh', this)">Bánh</button>
+      <button class="cat-btn" onclick="filterCategory('mut', this)">Mứt</button>
+      <button class="cat-btn" onclick="filterCategory('dau-hat', this)">Đậu - Hạt dinh dưỡng</button>
+      <button class="cat-btn" onclick="filterCategory('banh-hat-healthy', this)">Bánh hạt - Ăn vặt healthy</button>
+      <button class="cat-btn" onclick="filterCategory('mon-che-bien', this)">Món chế biến sẵn</button>
+      <button class="cat-btn" onclick="filterCategory('gia-vi', this)">Gia vị (nước chấm, muối, hành...)</button>
+      <button class="cat-btn" onclick="filterCategory('gio-cha-nem', this)">Các loại Giò - Chả - Nem</button>
+      <button class="cat-btn" onclick="filterCategory('tom', this)">Tôm</button>
+      <button class="cat-btn" onclick="filterCategory('lap-xuong', this)">Lạp xưởng</button>
+      <button class="cat-btn" onclick="filterCategory('mon-chay', this)">Món chay</button>
+    </div>
+    <div class="sort-bar">
+      <span class="sort-label"><i class="fa fa-sort-amount-down"></i> Sắp xếp:</span>
+      <select class="sort-select" onchange="sortProducts(this.value)">
+        <option value="default">Mặc định</option>
+        <option value="price-asc">Giá: Thấp → Cao</option>
+        <option value="price-desc">Giá: Cao → Thấp</option>
+        <option value="rating">⭐ Đánh giá cao nhất</option>
+        <option value="popular">🔥 Phổ biến nhất</option>
+      </select>
+      <span class="si-hint">💡 Mua <strong>≥10 hộp/món</strong> giảm <strong>5%</strong> · <strong>≥30 hộp</strong> giảm <strong>10%</strong></span>
     </div>
     <div class="product-grid" id="productGrid"></div>
   </div>
@@ -202,8 +234,10 @@
 
     <div class="about-text">
       <div class="section-label">🍱 Về chúng tôi</div>
-      <h2>Tại sao chọn<br/><span>Bếp Của Mẹ?</span></h2>
-      <p>Chúng tôi mang đến những món ăn vặt thơm ngon, tươi mới – được chế biến mỗi ngày với tình yêu thương và nguyên liệu sạch, giao hàng toàn quốc tận tay bạn.</p>
+      <h2>Câu chuyện của<br/><span>Bếp Của Mẹ</span></h2>
+      <p>Bếp của Mẹ được hình thành từ năm 2013, bắt đầu từ niềm đam mê mang đến những món ăn vặt thơm ngon, gần gũi nhưng không kém phần sáng tạo. Suốt nhiều năm qua, chúng tôi luôn không ngừng đổi mới để cho ra đời những món ăn vặt độc đáo, hợp khẩu vị và được giới trẻ đặc biệt yêu thích.</p>
+      <p style="margin-top:12px">Mỗi sản phẩm tại Bếp của Mẹ đều được chế biến từ nguyên liệu sạch, chọn lọc kỹ càng, gửi gắm trong đó là sự tận tâm và tình yêu thương như chính căn bếp gia đình. Chúng tôi tự hào khi được đông đảo khách hàng trong và ngoài nước tin tưởng lựa chọn, không chỉ để thưởng thức mà còn làm quà biếu ý nghĩa dành cho bạn bè, người thân và đối tác phương xa.</p>
+      <p style="margin-top:12px">Bếp của Mẹ mang đến những món ăn vặt phá cách, mới lạ nhưng vẫn giữ trọn hương vị đặc trưng của ẩm thực Việt Nam – thân quen, đậm đà và đầy cảm xúc.</p>
       <ul class="features-list">
         <li>
           <div class="feature-icon"><i class="fa fa-leaf"></i></div>
@@ -214,12 +248,12 @@
           <div class="feature-text"><strong>Giao hàng toàn quốc</strong><small>Phí ship 30.000đ · Miễn phí cho đơn từ 700.000đ</small></div>
         </li>
         <li>
-          <div class="feature-icon"><i class="fa fa-shield-alt"></i></div>
-          <div class="feature-text"><strong>Đổi trả trong 24 giờ</strong><small>Không hài lòng – hoàn tiền hoặc đổi món ngay</small></div>
+          <div class="feature-icon"><i class="fa fa-wind"></i></div>
+          <div class="feature-text"><strong>Đóng gói hút chân không</strong><small>Mang đi nước ngoài hoặc đi xa đường dài – giữ trọn hương vị</small></div>
         </li>
         <li>
           <div class="feature-icon"><i class="fa fa-wallet"></i></div>
-          <div class="feature-text"><strong>Thanh toán linh hoạt</strong><small>COD · Chuyển khoản · Momo · ZaloPay</small></div>
+          <div class="feature-text"><strong>Thanh toán linh hoạt</strong><small>COD · Chuyển khoản · Momo</small></div>
         </li>
       </ul>
     </div>
@@ -499,7 +533,7 @@
   </div>
   <div class="footer-bottom">
     <p>© 2026 Bếp Của Mẹ. Tất cả quyền được bảo lưu.</p>
-    <p>Made with ❤️ tại TP. Hồ Chí Minh</p>
+    <p>Made with ❤️ tại TP. Hồ Chí Minh · <a href="admin.html" style="color:var(--text-muted);font-size:0.75rem;opacity:0.5">Admin</a></p>
   </div>
 </footer>
 
@@ -764,6 +798,35 @@
 
 <!-- ====== TOAST ====== -->
 <div class="toast" id="toast"></div>
+
+<!-- ====== PRODUCT DETAIL DRAWER ====== -->
+<div class="pd-overlay" id="pdOverlay" onclick="closeProductDetail()"></div>
+<div class="pd-drawer" id="pdDrawer">
+  <button class="pd-close" onclick="closeProductDetail()"><i class="fa fa-times"></i></button>
+  <div class="pd-scroll">
+    <div id="pdContent"></div>
+  </div>
+</div>
+
+<!-- ====== ZALO WIDGET ====== -->
+<a class="zalo-widget" href="https://zalo.me/0909000000" target="_blank" rel="noopener" title="Chat Zalo với Bếp Của Mẹ">
+  <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+    <rect width="48" height="48" rx="12" fill="#0068FF"/>
+    <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="20" font-weight="800" font-family="Arial,sans-serif">Z</text>
+  </svg>
+  <span class="zalo-tooltip">Chat Zalo</span>
+</a>
+
+<!-- ====== LIVE PURCHASE NOTIF ====== -->
+<div class="live-notif" id="live-notif">
+  <div class="ln-icon" id="ln-icon">🛒</div>
+  <div class="ln-body">
+    <div class="ln-name" id="ln-name"></div>
+    <div class="ln-msg" id="ln-msg"></div>
+    <div class="ln-time" id="ln-time"></div>
+  </div>
+  <button class="ln-close" onclick="document.getElementById('live-notif').classList.remove('ln-show')">×</button>
+</div>
 
 <script defer src="script.js"></script>
 </body>

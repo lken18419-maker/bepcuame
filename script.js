@@ -1,153 +1,118 @@
 // ===== PRODUCT DATA =====
-// Để thêm ảnh: đặt file vào images/products/ rồi điền đường dẫn vào trường img
-// Ví dụ: img: "images/products/pringles.jpg"
-// Nếu img để null → tự dùng emoji làm placeholder
-// Để đổi giá: sửa price (giá hiện tại) và oldPrice (giá gạch, để null nếu không có)
-const products = [
+// price = giá lẻ | wholesale_price = giá sỉ (hiển thị trên thẻ sản phẩm)
+// Giảm tự động trong giỏ: mua ≥10 SKU/món → -5%, ≥30 SKU/món → -10%
+let products = [
   {
-    id: 1,  name: "Pringles Original",
-    img: null,              // ← đặt ảnh: "images/products/pringles.jpg"
-    emoji: "🥔",
-    category: "chips",
-    price: 45000,           // ← giá bán
-    oldPrice: 55000,        // ← giá gốc (gạch ngang), null nếu không có
+    id: 1,  name: "Bánh Tráng Trộn",
+    img: null, emoji: "🌯", category: "banh-trang",
+    price: 25000, wholesale_price: 20000,
     badge: "Hot", badge_type: "",
-    origin: "🇺🇸 Mỹ", rating: 4.9, reviews: 320,
+    origin: "🇻🇳 Việt Nam", rating: 4.9, reviews: 320,
   },
   {
-    id: 2,  name: "Lotte Pepero Chocolate",
-    img: null,              // ← "images/products/pepero.jpg"
-    emoji: "🍫",
-    category: "chocolate",
-    price: 32000, oldPrice: 38000,
+    id: 2,  name: "Bò Khô Sốt Sa Tế",
+    img: null, emoji: "🥩", category: "bo",
+    price: 55000, wholesale_price: 44000,
+    badge: "Bán chạy", badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 210,
+  },
+  {
+    id: 3,  name: "Mực Rim Chua Ngọt",
+    img: null, emoji: "🦑", category: "muc",
+    price: 48000, wholesale_price: 38000,
     badge: "Sale", badge_type: "sale",
-    origin: "🇰🇷 Hàn Quốc", rating: 4.8, reviews: 210,
+    origin: "🇻🇳 Việt Nam", rating: 4.7, reviews: 185,
   },
   {
-    id: 3,  name: "Oreo Double Cream",
-    img: null,              // ← "images/products/oreo.jpg"
-    emoji: "🍪",
-    category: "biscuit",
-    price: 28000, oldPrice: 35000,
-    badge: "Sale", badge_type: "sale",
-    origin: "🇺🇸 Mỹ", rating: 4.7, reviews: 185,
-  },
-  {
-    id: 4,  name: "Nước Tăng Lực Monster",
-    img: null,              // ← "images/products/monster.jpg"
-    emoji: "🧃",
-    category: "drink",
-    price: 30000, oldPrice: null,
+    id: 4,  name: "Cá Sặc Rằn Sấy Khô",
+    img: null, emoji: "🐟", category: "ca",
+    price: 35000, wholesale_price: 28000,
     badge: null, badge_type: "",
-    origin: "🇺🇸 Mỹ", rating: 4.5, reviews: 290,
+    origin: "🇻🇳 Việt Nam", rating: 4.5, reviews: 290,
   },
   {
-    id: 5,  name: "Haribo Gummy Bears",
-    img: null,              // ← "images/products/haribo.jpg"
-    emoji: "🍬",
-    category: "candy",
-    price: 38000, oldPrice: 45000,
+    id: 5,  name: "Heo Quay Chà Bông",
+    img: null, emoji: "🐷", category: "heo",
+    price: 45000, wholesale_price: 36000,
     badge: "Yêu thích", badge_type: "",
-    origin: "🇩🇪 Đức", rating: 4.9, reviews: 410,
+    origin: "🇻🇳 Việt Nam", rating: 4.9, reviews: 410,
   },
   {
-    id: 6,  name: "Doritos Nacho Cheese",
-    img: null,              // ← "images/products/doritos.jpg"
-    emoji: "🌽",
-    category: "chips",
-    price: 42000, oldPrice: 50000,
+    id: 6,  name: "Gà Sấy Mắm Ớt",
+    img: null, emoji: "🍗", category: "ga",
+    price: 42000, wholesale_price: 33000,
     badge: "Hot", badge_type: "",
-    origin: "🇺🇸 Mỹ", rating: 4.8, reviews: 275,
+    origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 275,
   },
   {
-    id: 7,  name: "Kit Kat Matcha",
-    img: null,              // ← "images/products/kitkat-matcha.jpg"
-    emoji: "🍵",
-    category: "chocolate",
-    price: 55000, oldPrice: 65000,
+    id: 7,  name: "Chả Bông Heo Lon 200g",
+    img: null, emoji: "🫙", category: "cha-bong",
+    price: 60000, wholesale_price: 48000,
     badge: "Mới", badge_type: "new",
-    origin: "🇯🇵 Nhật", rating: 4.9, reviews: 198,
+    origin: "🇻🇳 Việt Nam", rating: 4.9, reviews: 198,
   },
   {
-    id: 8,  name: "Twisties Phô Mai",
-    img: null,              // ← "images/products/twisties.jpg"
-    emoji: "🧀",
-    category: "chips",
-    price: 25000, oldPrice: null,
+    id: 8,  name: "Cơm Cháy Nước Mắm Tỏi",
+    img: null, emoji: "🍚", category: "com-chay",
+    price: 30000, wholesale_price: 24000,
     badge: null, badge_type: "",
-    origin: "🇹🇭 Thái Lan", rating: 4.4, reviews: 160,
+    origin: "🇻🇳 Việt Nam", rating: 4.4, reviews: 160,
   },
   {
-    id: 9,  name: "Pocky Dâu Tây",
-    img: null,              // ← "images/products/pocky-dau.jpg"
-    emoji: "🍓",
-    category: "biscuit",
-    price: 35000, oldPrice: 40000,
+    id: 9,  name: "Me Chua Ngọt Rim Muối",
+    img: null, emoji: "🍋", category: "me-xi-muoi",
+    price: 22000, wholesale_price: 17000,
     badge: "Sale", badge_type: "sale",
-    origin: "🇯🇵 Nhật", rating: 4.9, reviews: 330,
+    origin: "🇻🇳 Việt Nam", rating: 4.9, reviews: 330,
   },
   {
-    id: 10, name: "Pepsi Không Đường",
-    img: null,              // ← "images/products/pepsi.jpg"
-    emoji: "🥤",
-    category: "drink",
-    price: 15000, oldPrice: null,
+    id: 10, name: "Xoài Sấy Dẻo",
+    img: null, emoji: "🥭", category: "trai-cay-say",
+    price: 38000, wholesale_price: 30000,
     badge: null, badge_type: "",
-    origin: "🇺🇸 Mỹ", rating: 4.3, reviews: 500,
+    origin: "🇻🇳 Việt Nam", rating: 4.3, reviews: 500,
   },
   {
-    id: 11, name: "M&Ms Peanut",
-    img: null,              // ← "images/products/mms.jpg"
-    emoji: "🟤",
-    category: "chocolate",
-    price: 48000, oldPrice: 58000,
+    id: 11, name: "Rong Biển Tẩm Gia Vị",
+    img: null, emoji: "🌿", category: "rong-bien",
+    price: 28000, wholesale_price: 22000,
     badge: "Hot", badge_type: "",
-    origin: "🇺🇸 Mỹ", rating: 4.9, reviews: 260,
+    origin: "🇰🇷 Hàn Quốc", rating: 4.9, reviews: 260,
   },
   {
-    id: 12, name: "Mentos Trái Cây",
-    img: null,              // ← "images/products/mentos.jpg"
-    emoji: "🍭",
-    category: "candy",
-    price: 18000, oldPrice: null,
+    id: 12, name: "Snack Nhập Khẩu Hàn Quốc",
+    img: null, emoji: "🍿", category: "nhap-khau",
+    price: 45000, wholesale_price: 36000,
     badge: null, badge_type: "",
-    origin: "🇳🇱 Hà Lan", rating: 4.2, reviews: 145,
+    origin: "🇰🇷 Hàn Quốc", rating: 4.2, reviews: 145,
   },
   {
-    id: 13, name: "Pretz Bơ Muối",
-    img: null,              // ← "images/products/pretz.jpg"
-    emoji: "🥨",
-    category: "biscuit",
-    price: 30000, oldPrice: 36000,
+    id: 13, name: "Trà Ô Long Đài Loan",
+    img: null, emoji: "🍵", category: "tra-nuoc",
+    price: 32000, wholesale_price: 25000,
     badge: "Mới", badge_type: "new",
-    origin: "🇯🇵 Nhật", rating: 4.6, reviews: 112,
+    origin: "🇹🇼 Đài Loan", rating: 4.6, reviews: 112,
   },
   {
-    id: 14, name: "Aloe Vera Drink",
-    img: null,              // ← "images/products/aloe-vera.jpg"
-    emoji: "🌿",
-    category: "drink",
-    price: 22000, oldPrice: null,
-    badge: "Healthy", badge_type: "sale",
-    origin: "🇰🇷 Hàn Quốc", rating: 4.8, reviews: 380,
-  },
-  {
-    id: 15, name: "Snickers Bar",
-    img: null,              // ← "images/products/snickers.jpg"
-    emoji: "🍫",
-    category: "chocolate",
-    price: 25000, oldPrice: 30000,
+    id: 14, name: "Kẹo Dừa Bến Tre",
+    img: null, emoji: "🍬", category: "keo",
+    price: 20000, wholesale_price: 16000,
     badge: null, badge_type: "",
-    origin: "🇺🇸 Mỹ", rating: 4.4, reviews: 220,
+    origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 380,
   },
   {
-    id: 16, name: "Lay's Thai Basil",
-    img: null,              // ← "images/products/lays-thai.jpg"
-    emoji: "🌿",
-    category: "chips",
-    price: 28000, oldPrice: 35000,
+    id: 15, name: "Bánh Pía Đậu Xanh",
+    img: null, emoji: "🥮", category: "banh",
+    price: 35000, wholesale_price: 28000,
+    badge: null, badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.4, reviews: 220,
+  },
+  {
+    id: 16, name: "Hạt Điều Rang Muối",
+    img: null, emoji: "🥜", category: "dau-hat",
+    price: 65000, wholesale_price: 52000,
     badge: "Hot", badge_type: "",
-    origin: "🇹🇭 Thái Lan", rating: 4.9, reviews: 190,
+    origin: "🇻🇳 Việt Nam", rating: 4.9, reviews: 190,
   },
 ];
 
@@ -173,6 +138,18 @@ function getTier(totalSpent) {
 function getNextTier(totalSpent) {
   const cur = getTier(totalSpent);
   return cur.next ? TIERS.find(t => t.key === cur.next) : null;
+}
+
+// ===== SKU BULK DISCOUNT =====
+// ≥10 SKU/món → -5% | ≥30 SKU/món → -10% (áp dụng trên giá lẻ, trước giảm hạng)
+function getSkuDiscount(qty) {
+  if (qty >= 30) return 0.10;
+  if (qty >= 10) return 0.05;
+  return 0;
+}
+function getEffectivePrice(price, qty) {
+  const d = getSkuDiscount(qty);
+  return d > 0 ? Math.round(price * (1 - d)) : price;
 }
 
 // ===== SUPABASE BACKEND =====
@@ -550,23 +527,14 @@ function renderProfilePanel() {
 
   // Order history
   const orders = user.orders || [];
-  document.getElementById('ppOrders').innerHTML = orders.length
-    ? orders.slice(0, 10).map(o => `
-        <div class="pp-order-item">
-          <div class="pp-order-code">${o.code}</div>
-          <div class="pp-order-info">
-            <div class="pp-order-items">${o.items}</div>
-            <div class="pp-order-addr">${o.address || ''}</div>
-          </div>
-          <div class="pp-order-total">${formatPrice(o.total)}</div>
-        </div>`).join('')
-    : `<div class="pp-empty">Chưa có đơn hàng nào 🛒</div>`;
+  loadOrderHistory();
 }
 
 // ===== STATE =====
 let cart = [];
 let currentCategory = 'all';
 let currentSearch = '';
+let currentSort = 'default';
 let wishlist = new Set();
 
 // ===== LOAD SẢN PHẨM TỪ SUPABASE =====
@@ -576,18 +544,18 @@ async function loadProducts() {
   if (error || !data?.length) { renderProducts(products); return; } // fallback hardcode
   // Map cột Supabase → định dạng hiện tại
   products = data.map(p => ({
-    id:        p.id,
-    name:      p.name,
-    emoji:     p.emoji || '🍱',
-    img:       p.img || null,
-    category:  p.category || 'other',
-    price:     Number(p.price),
-    oldPrice:  p.old_price ? Number(p.old_price) : null,
-    badge:     p.badge || null,
-    badge_type:p.badge_type || '',
-    origin:    p.origin || '',
-    rating:    Number(p.rating) || 5.0,
-    reviews:   Number(p.reviews) || 0,
+    id:              p.id,
+    name:            p.name,
+    emoji:           p.emoji || '🍱',
+    img:             p.img || null,
+    category:        p.category || 'other',
+    price:           Number(p.price),
+    wholesale_price: p.wholesale_price ? Number(p.wholesale_price) : Math.round(Number(p.price) * 0.8),
+    badge:           p.badge || null,
+    badge_type:      p.badge_type || '',
+    origin:          p.origin || '',
+    rating:          Number(p.rating) || 5.0,
+    reviews:         Number(p.reviews) || 0,
   }));
   renderProducts(products);
 }
@@ -614,7 +582,7 @@ function renderProducts(list) {
   }
 
   grid.innerHTML = list.map((p, i) => `
-    <div class="product-card" onclick="addToCart(${p.id})" style="animation-delay:${i * 0.07}s">
+    <div class="product-card" style="animation-delay:${i * 0.07}s" onclick="openProductDetail(${p.id})">
       ${p.badge ? `<div class="product-badge badge-${p.badge_type}">${p.badge}</div>` : ''}
       <button class="wishlist-btn ${wishlist.has(p.id) ? 'active' : ''}"
         onclick="event.stopPropagation(); toggleWishlist(${p.id}, this)">
@@ -635,13 +603,31 @@ function renderProducts(list) {
           <span class="rating-count">${p.rating} (${p.reviews})</span>
         </div>
         <div class="product-footer">
-          <div class="price-wrap">
-            <span class="product-price">${formatPrice(p.price)}</span>
-            ${p.oldPrice ? `<span class="product-old-price">${formatPrice(p.oldPrice)}</span>` : ''}
+          <div class="price-grid">
+            <div class="pg-col retail">
+              <span class="pg-lbl">Lẻ</span>
+              <span class="pg-price">${formatPrice(p.price)}</span>
+              <span class="pg-cond">—</span>
+            </div>
+            <div class="pg-col si5">
+              <span class="pg-lbl">Sỉ −5%</span>
+              <span class="pg-price">${formatPrice(Math.round(p.price * 0.95))}</span>
+              <span class="pg-cond">≥10 hộp</span>
+            </div>
+            <div class="pg-col si10">
+              <span class="pg-lbl">Sỉ −10%</span>
+              <span class="pg-price">${formatPrice(Math.round(p.price * 0.90))}</span>
+              <span class="pg-cond">≥30 hộp</span>
+            </div>
           </div>
-          <button class="add-btn" onclick="event.stopPropagation(); addToCart(${p.id})" title="Thêm vào giỏ">
-            <i class="fa fa-plus"></i>
-          </button>
+          <div class="pg-buy-section">
+            <span class="pg-buy-label">MUA</span>
+            <div class="pg-btn-row">
+              <button class="pg-add-btn" onclick="event.stopPropagation();addToCartQty(${p.id},1)">+ 1 hộp</button>
+              <button class="pg-add-btn si5-add" onclick="event.stopPropagation();addToCartQty(${p.id},10)">+ 10 hộp</button>
+              <button class="pg-add-btn si10-add" onclick="event.stopPropagation();addToCartQty(${p.id},30)">+ 30 hộp</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -649,11 +635,18 @@ function renderProducts(list) {
 }
 
 function getFiltered() {
-  return products.filter(p => {
-    const matchCat = currentCategory === 'all' || p.category === currentCategory;
+  let list = products.filter(p => {
+    const matchCat    = currentCategory === 'all' || p.category === currentCategory;
     const matchSearch = p.name.toLowerCase().includes(currentSearch.toLowerCase());
     return matchCat && matchSearch;
   });
+  switch (currentSort) {
+    case 'price-asc':  return [...list].sort((a, b) => a.price - b.price);
+    case 'price-desc': return [...list].sort((a, b) => b.price - a.price);
+    case 'rating':     return [...list].sort((a, b) => b.rating - a.rating);
+    case 'popular':    return [...list].sort((a, b) => b.reviews - a.reviews);
+    default:           return list;
+  }
 }
 
 function filterCategory(cat, btn) {
@@ -663,8 +656,8 @@ function filterCategory(cat, btn) {
   renderProducts(getFiltered());
 }
 
-function filterProducts() {
-  currentSearch = document.getElementById('searchInput').value;
+function sortProducts(val) {
+  currentSort = val;
   renderProducts(getFiltered());
 }
 
@@ -701,6 +694,21 @@ function addToCart(id) {
   setTimeout(() => cartBtn.style.transform = '', 250);
 }
 
+function addToCartQty(id, qty) {
+  const product = products.find(p => p.id === id);
+  const existing = cart.find(i => i.id === id);
+  if (existing) {
+    existing.qty += qty;
+  } else {
+    cart.push({ ...product, qty });
+  }
+  updateCartUI();
+  showToast(`✅ Đã thêm ${qty} "${product.name}" vào giỏ!`);
+  const cartBtn = document.querySelector('.cart-btn');
+  cartBtn.style.transform = 'scale(1.3)';
+  setTimeout(() => cartBtn.style.transform = '', 250);
+}
+
 function removeFromCart(id) {
   cart = cart.filter(i => i.id !== id);
   updateCartUI();
@@ -726,12 +734,21 @@ function updateCartUI() {
         <p>Giỏ hàng đang trống</p>
       </div>`;
   } else {
-    itemsEl.innerHTML = cart.map(item => `
+    itemsEl.innerHTML = cart.map(item => {
+      const skuDisc   = getSkuDiscount(item.qty);
+      const effPrice  = getEffectivePrice(item.price, item.qty);
+      const discBadge = skuDisc > 0
+        ? `<span class="sku-disc-badge">-${skuDisc * 100}% sỉ</span>`
+        : (item.qty >= 5 ? `<span class="sku-near-badge">còn ${10 - item.qty} để -5%</span>` : '');
+      return `
       <div class="cart-item">
         <div class="ci-img">${item.img ? `<img src="${item.img}" style="width:100%;height:100%;object-fit:cover;border-radius:10px"/>` : item.emoji}</div>
         <div class="ci-body">
-          <div class="ci-name">${item.name}</div>
-          <div class="ci-price">${formatPrice(item.price * item.qty)}</div>
+          <div class="ci-name">${item.name} ${discBadge}</div>
+          <div class="ci-price">
+            ${formatPrice(effPrice * item.qty)}
+            ${skuDisc > 0 ? `<span class="ci-price-orig">${formatPrice(item.price * item.qty)}</span>` : ''}
+          </div>
           <div class="ci-controls">
             <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
             <span class="qty-val">${item.qty}</span>
@@ -741,11 +758,11 @@ function updateCartUI() {
         <button class="remove-btn" onclick="removeFromCart(${item.id})" title="Xoá">
           <i class="fa fa-trash"></i>
         </button>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   }
 
-  const subTotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const subTotal = cart.reduce((s, i) => s + getEffectivePrice(i.price, i.qty) * i.qty, 0);
   const freeShip = subTotal >= 700000;
   const shipFee = freeShip ? 0 : 30000;
   const grandTotal = subTotal + shipFee;
@@ -759,7 +776,7 @@ function updateCartUI() {
            <span style="font-weight:700">30.000đ</span>
          </div>
          <div style="font-size:0.78rem;color:var(--text-muted)">
-           Mua thêm <strong style="color:var(--p1)">${formatPrice(700000 - subTotal)}</strong> để miễn phí ship
+           Mua thêm <strong style="color:var(--g-dark)">${formatPrice(700000 - subTotal)}</strong> để miễn phí ship
          </div>`;
   }
   document.getElementById('cartTotal').textContent = formatPrice(grandTotal);
@@ -795,31 +812,49 @@ function closeCheckout() {
 }
 
 function renderCheckoutSummary() {
-  const user      = getCurrentUser();
-  const tier      = user ? getTier(user.totalSpent) : null;
-  const discount  = tier ? tier.discount : 0;
-  const subTotal  = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const discAmt   = Math.round(subTotal * discount);
-  const afterDisc = subTotal - discAmt;
-  const freeShip  = afterDisc >= 700000;
-  const shipFee   = freeShip ? 0 : 30000;
-  const grand     = afterDisc + shipFee;
+  const user       = getCurrentUser();
+  const tier       = user ? getTier(user.totalSpent) : null;
+  const tierDisc   = tier ? tier.discount : 0;
 
-  document.getElementById('coOrderItems').innerHTML = cart.map(item => `
+  // Raw total (giá lẻ * số lượng)
+  const rawTotal   = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  // Tiết kiệm từ SKU bulk discount
+  const skuSaving  = cart.reduce((s, i) => {
+    const d = getSkuDiscount(i.qty);
+    return s + (d > 0 ? Math.round(i.price * d) * i.qty : 0);
+  }, 0);
+  const afterSku   = rawTotal - skuSaving;
+  // Giảm hạng thành viên (tính trên giá sau SKU)
+  const tierAmt    = Math.round(afterSku * tierDisc);
+  const afterDisc  = afterSku - tierAmt;
+  const freeShip   = afterDisc >= 700000;
+  const shipFee    = freeShip ? 0 : 30000;
+  const grand      = afterDisc + shipFee;
+
+  document.getElementById('coOrderItems').innerHTML = cart.map(item => {
+    const skuD = getSkuDiscount(item.qty);
+    const effP = getEffectivePrice(item.price, item.qty);
+    return `
     <div class="co-order-item">
       <div class="co-item-emoji">${item.emoji}</div>
       <div class="co-item-body">
-        <div class="co-item-name">${item.name}</div>
-        <div class="co-item-qty">x${item.qty}</div>
+        <div class="co-item-name">${item.name}${skuD > 0 ? ` <span class="sku-disc-badge">-${skuD*100}%</span>` : ''}</div>
+        <div class="co-item-qty">x${item.qty} × ${formatPrice(effP)}</div>
       </div>
-      <div class="co-item-price">${formatPrice(item.price * item.qty)}</div>
-    </div>
-  `).join('');
+      <div class="co-item-price">${formatPrice(effP * item.qty)}</div>
+    </div>`;
+  }).join('');
 
-  const tierRow = (tier && discount > 0) ? `
+  const skuRow = skuSaving > 0 ? `
+    <div class="co-summary-row" style="color:#2F6B3F;font-weight:700">
+      <span>📦 Giảm giá sỉ (theo số lượng)</span>
+      <span>-${formatPrice(skuSaving)}</span>
+    </div>` : '';
+
+  const tierRow = (tier && tierDisc > 0) ? `
     <div class="co-summary-row" style="color:var(--green);font-weight:700">
-      <span>${tier.icon} Ưu đãi ${tier.name} (${discount*100}%)</span>
-      <span>-${formatPrice(discAmt)}</span>
+      <span>${tier.icon} Ưu đãi ${tier.name} (${tierDisc*100}%)</span>
+      <span>-${formatPrice(tierAmt)}</span>
     </div>` : '';
 
   const loginHint = !user ? `
@@ -832,8 +867,9 @@ function renderCheckoutSummary() {
     ${loginHint}
     <div class="co-summary-row">
       <span>Tạm tính (${cart.reduce((s,i)=>s+i.qty,0)} món)</span>
-      <span>${formatPrice(subTotal)}</span>
+      <span>${formatPrice(rawTotal)}</span>
     </div>
+    ${skuRow}
     ${tierRow}
     <div class="co-summary-row ${freeShip ? 'free-ship' : ''}">
       <span>Phí giao hàng</span>
@@ -895,10 +931,17 @@ async function submitCheckout(e) {
   const orderCode    = 'BCM' + Date.now().toString().slice(-6);
   const user         = getCurrentUser();
   const tier         = user ? getTier(user.totalSpent) : null;
-  const discount     = tier ? tier.discount : 0;
-  const subTotal     = cart.reduce((s,i) => s+i.price*i.qty, 0);
-  const discAmt      = Math.round(subTotal * discount);
-  const afterDisc    = subTotal - discAmt;
+  const tierDisc     = tier ? tier.discount : 0;
+  const rawTotal     = cart.reduce((s,i) => s+i.price*i.qty, 0);
+  const skuSaving    = cart.reduce((s,i) => {
+    const d = getSkuDiscount(i.qty);
+    return s + (d > 0 ? Math.round(i.price * d) * i.qty : 0);
+  }, 0);
+  const afterSku     = rawTotal - skuSaving;
+  const tierAmt      = Math.round(afterSku * tierDisc);
+  const discAmt      = skuSaving + tierAmt;
+  const afterDisc    = afterSku - tierAmt;
+  const subTotal     = rawTotal;
   const shipFee      = afterDisc >= 700000 ? 0 : 30000;
   const grandTotal   = afterDisc + shipFee;
   const paymentLabel = { cod: 'COD', transfer: 'Chuyển khoản', momo: 'MoMo', vnpay: 'VNPay' }[payment] || payment;
@@ -946,7 +989,7 @@ async function submitCheckout(e) {
     <div style="font-size:0.82rem;color:var(--text-muted);text-align:center;line-height:1.8">
       Giao đến: ${address}, ${city}<br/>
       Tổng tiền: <strong style="color:var(--red)">${formatPrice(grandTotal)}</strong> · ${paymentLabel}
-      ${discAmt > 0 ? `<br/><span style="color:var(--green)">✅ Đã tiết kiệm ${formatPrice(discAmt)} (ưu đãi ${tier.name})</span>` : ''}
+      ${discAmt > 0 ? `<br/><span style="color:var(--green)">✅ Đã tiết kiệm ${formatPrice(discAmt)}${skuSaving > 0 ? ` (sỉ: ${formatPrice(skuSaving)}${tierAmt > 0 ? ` + ${tier.name}: ${formatPrice(tierAmt)}` : ''})` : tierAmt > 0 ? ` (ưu đãi ${tier.name})` : ''}</span>` : ''}
     </div>
     ${user ? (() => {
       const newUser = getCurrentUser();
@@ -1155,4 +1198,182 @@ document.addEventListener('DOMContentLoaded', () => {
   initStatCounters();
   initReveal();
   setTimeout(initMagneticBtns, 500);
+  setTimeout(initLiveNotif, 4000);
 });
+
+// ===== PRODUCT DETAIL DRAWER =====
+function openProductDetail(id) {
+  const p = products.find(pr => pr.id === id);
+  if (!p) return;
+  document.getElementById('pdContent').innerHTML = `
+    <div class="pd-hero">
+      ${p.img ? `<img src="${p.img}" alt="${p.name}" class="pd-img"/>` : `<div class="pd-emoji">${p.emoji}</div>`}
+    </div>
+    <div class="pd-info">
+      <div class="pd-tag">${p.origin}</div>
+      <h2 class="pd-name">${p.name}</h2>
+      <div class="pd-rating">
+        <span class="stars">${renderStars(p.rating)}</span>
+        <span class="rating-count">${p.rating} · ${p.reviews} đánh giá</span>
+      </div>
+      ${p.badge ? `<span class="product-badge badge-${p.badge_type}" style="position:static;display:inline-block;margin-bottom:10px">${p.badge}</span>` : ''}
+      <div class="pd-price-grid">
+        <div class="pd-pc retail">
+          <div class="pd-pc-lbl">Lẻ</div>
+          <div class="pd-pc-price">${formatPrice(p.price)}</div>
+          <div class="pd-pc-cond">—</div>
+        </div>
+        <div class="pd-pc si5">
+          <div class="pd-pc-lbl">Sỉ −5%</div>
+          <div class="pd-pc-price">${formatPrice(Math.round(p.price * 0.95))}</div>
+          <div class="pd-pc-cond">≥10 hộp</div>
+        </div>
+        <div class="pd-pc si10">
+          <div class="pd-pc-lbl">Sỉ −10%</div>
+          <div class="pd-pc-price">${formatPrice(Math.round(p.price * 0.90))}</div>
+          <div class="pd-pc-cond">≥30 hộp</div>
+        </div>
+      </div>
+      ${p.description ? `<p class="pd-desc">${p.description}</p>` : ''}
+      <div class="pd-buy-section">
+        <span class="pd-buy-lbl">MUA HÀNG</span>
+        <div class="pd-buy-btns">
+          <button class="pd-buy-btn" onclick="addToCartQty(${p.id},1);closeProductDetail()">+ 1 hộp · ${formatPrice(p.price)}</button>
+          <button class="pd-buy-btn si5" onclick="addToCartQty(${p.id},10);closeProductDetail()">+ 10 hộp · ${formatPrice(Math.round(p.price*0.95))} <span>−5%</span></button>
+          <button class="pd-buy-btn si10" onclick="addToCartQty(${p.id},30);closeProductDetail()">+ 30 hộp · ${formatPrice(Math.round(p.price*0.90))} <span>−10%</span></button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('pdOverlay').classList.add('active');
+  document.getElementById('pdDrawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeProductDetail() {
+  document.getElementById('pdOverlay').classList.remove('active');
+  document.getElementById('pdDrawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ===== SEARCH AUTOCOMPLETE =====
+function filterProducts() {
+  currentSearch = document.getElementById('searchInput').value;
+  renderProducts(getFiltered());
+  renderSearchSuggestions();
+}
+function renderSearchSuggestions() {
+  const q   = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+  const el  = document.getElementById('searchSuggestions');
+  if (!el) return;
+  if (!q) { el.classList.remove('active'); return; }
+  const hits = products.filter(p => p.name.toLowerCase().includes(q)).slice(0, 7);
+  if (!hits.length) { el.classList.remove('active'); return; }
+  el.innerHTML = hits.map(p => {
+    const hi = p.name.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<mark>$1</mark>');
+    return `<div class="ss-item" onmousedown="selectSuggestion(${p.id})">
+      <span class="ss-emoji">${p.emoji || '🍱'}</span>
+      <span class="ss-name">${hi}</span>
+      <span class="ss-price">${formatPrice(p.price)}</span>
+    </div>`;
+  }).join('');
+  el.classList.add('active');
+}
+function hideSearchSuggestions() {
+  setTimeout(() => document.getElementById('searchSuggestions')?.classList.remove('active'), 150);
+}
+function selectSuggestion(id) {
+  const p = products.find(pr => pr.id === id);
+  if (!p) return;
+  document.getElementById('searchInput').value = p.name;
+  currentSearch = p.name;
+  renderProducts(getFiltered());
+  document.getElementById('searchSuggestions')?.classList.remove('active');
+  document.getElementById('products')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ===== ORDER HISTORY =====
+async function loadOrderHistory() {
+  const el = document.getElementById('ppOrders');
+  if (!el) return;
+  const user = getCurrentUser();
+  if (!user) return;
+  el.innerHTML = '<div style="padding:12px;color:var(--text-muted);font-size:.85rem"><i class="fa fa-spinner fa-spin"></i> Đang tải...</div>';
+  if (_sb) {
+    const { data } = await _sb.from('orders').select('*')
+      .eq('phone', user.phone).order('created_at', { ascending: false }).limit(20);
+    if (data?.length) { renderOrderList(el, data); return; }
+  }
+  const local = JSON.parse(localStorage.getItem('bcm_orders') || '[]')
+    .filter(o => o.phone === user.phone).reverse().slice(0, 20);
+  local.length ? renderOrderList(el, local)
+    : (el.innerHTML = '<p class="pp-empty">Chưa có đơn hàng nào.</p>');
+}
+function renderOrderList(el, orders) {
+  const statusMap = {
+    pending:   ['badge-pending',   'Chờ XN'],
+    confirmed: ['badge-confirmed', 'Đã XN'],
+    shipping:  ['badge-shipping',  'Đang giao'],
+    done:      ['badge-done',      'Hoàn thành'],
+    cancelled: ['badge-cancelled', 'Đã huỷ'],
+  };
+  el.innerHTML = orders.map(o => {
+    const [cls, lbl] = statusMap[o.status] || ['badge-pending', o.status || '—'];
+    const date  = o.created_at ? new Date(o.created_at).toLocaleDateString('vi-VN') : '';
+    const total = o.grand_total || o.grandTotal || 0;
+    const code  = o.order_code || String(o.id || '').slice(-6).toUpperCase();
+    return `<div class="pp-order-item">
+      <div class="pp-order-row">
+        <span class="pp-order-code">#${code}</span>
+        <span class="badge ${cls}">${lbl}</span>
+      </div>
+      <div class="pp-order-row pp-order-meta">
+        <span>${date}</span>
+        <strong>${formatPrice(total)}</strong>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===== LIVE PURCHASE NOTIFICATION =====
+function initLiveNotif() {
+  const names = [
+    'Nguyễn Thị H.', 'Trần Văn M.', 'Lê Thị T.', 'Phạm Minh K.',
+    'Hoàng Thị L.', 'Đặng Văn N.', 'Bùi Thị P.', 'Vũ Thị A.',
+    'Đinh Văn S.', 'Phan Thị B.', 'Lý Văn C.', 'Đỗ Thị D.',
+    'Hồ Văn E.', 'Ngô Thị F.', 'Tăng Văn G.', 'Dương Thị I.',
+    'Trương Văn J.', 'Mai Thị Q.', 'Lưu Văn R.', 'Cao Thị U.',
+    'Thái Văn W.', 'Đinh Thị X.', 'Quách Văn Y.', 'Từ Thị Z.',
+  ];
+  const times = [
+    'vừa xong', '1 phút trước', '2 phút trước', '3 phút trước',
+    '5 phút trước', '7 phút trước', '10 phút trước',
+  ];
+  const emojis = ['🛒','✅','🎉','🔥','💚'];
+  const quantities = [1, 2, 3, 5, 10, 20, 30];
+
+  const el    = document.getElementById('live-notif');
+  const elName = document.getElementById('ln-name');
+  const elMsg  = document.getElementById('ln-msg');
+  const elTime = document.getElementById('ln-time');
+  const elIcon = document.getElementById('ln-icon');
+
+  function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  function show() {
+    const product = rand(products);
+    const qty     = rand(quantities);
+    elName.textContent = rand(names);
+    elMsg.textContent  = `vừa mua ${qty} hộp ${product.name}`;
+    elTime.textContent = rand(times);
+    elIcon.textContent = rand(emojis);
+
+    el.classList.add('ln-show');
+
+    setTimeout(() => {
+      el.classList.remove('ln-show');
+    }, 4500);
+  }
+
+  show();
+  setInterval(show, 8000);
+}
