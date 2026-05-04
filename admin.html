@@ -578,8 +578,8 @@
     document.querySelectorAll('.nav-item')[['overview','orders','products'].indexOf(name)].classList.add('active');
     document.getElementById('topbar-title').textContent = tabTitles[name];
     currentTab = name;
-    if (name === 'orders' && allOrders === null) loadOrders();
-    if (name === 'products' && allProducts === null) loadProducts();
+    if (name === 'orders') { if (allOrders === null) loadOrders(); else renderOrdersTable(); }
+    if (name === 'products') { if (allProducts === null) loadProducts(); else renderProductsTable(); }
   }
   function refreshCurrent() { reloadTab(currentTab); }
   function reloadTab(name) {
