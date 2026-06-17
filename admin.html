@@ -638,10 +638,10 @@
     document.querySelectorAll('.nav-item')[['overview','orders','products','users','contacts'].indexOf(name)].classList.add('active');
     document.getElementById('topbar-title').textContent = tabTitles[name];
     currentTab = name;
-    if (name === 'orders') { if (allOrders === null) loadOrders(); else renderOrdersTable(); }
-    if (name === 'products') { if (allProducts === null) loadProducts(); else renderProductsTable(); }
-    if (name === 'users') { if (allUsers === null) loadUsers(); else renderUsersTable(); }
-    if (name === 'contacts') { if (allContacts === null) loadContacts(); else renderContactsTable(); }
+    if (name === 'orders')   { if (allOrders   === null) loadOrders();   else { filteredOrders   = [...allOrders];   renderOrdersTable(); } }
+    if (name === 'products') { if (allProducts === null) loadProducts(); else { filteredProducts = [...allProducts]; renderProductsTable(); } }
+    if (name === 'users')    { if (allUsers    === null) loadUsers();    else { filteredUsers    = [...allUsers];    renderUsersTable(); } }
+    if (name === 'contacts') { if (allContacts === null) loadContacts(); else { filteredContacts = [...allContacts]; renderContactsTable(); } }
   }
   function refreshCurrent() { reloadTab(currentTab); }
   function reloadTab(name) {
