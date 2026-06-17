@@ -3,116 +3,275 @@
 // Giảm tự động trong giỏ: mua ≥10 SKU/món → -5%, ≥30 SKU/món → -10%
 let products = [
   {
-    id: 1,  name: "Bánh Tráng Trộn",
-    img: null, emoji: "🌯", category: "banh-trang",
-    price: 25000, wholesale_price: 20000,
+    id: 1,  name: "Rong Biển Cháy Tỏi",
+    img: null, emoji: "🌿", category: "rong-bien",
+    price: 180000, wholesale_price: 144000,
     badge: "Hot", badge_type: "",
     origin: "🇻🇳 Việt Nam", rating: 4.9, reviews: 320,
+    description: "Rong biển Hàn Quốc tẩm gia vị tỏi thơm, nướng giòn tan. Ăn kèm cơm hoặc nhâm nhi là ngon tuyệt. Đóng gói hút chân không giữ độ giòn lâu.",
   },
   {
-    id: 2,  name: "Bò Khô Sốt Sa Tế",
-    img: null, emoji: "🥩", category: "bo",
-    price: 55000, wholesale_price: 44000,
-    badge: "Bán chạy", badge_type: "",
-    origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 210,
-  },
-  {
-    id: 3,  name: "Mực Rim Chua Ngọt",
-    img: null, emoji: "🦑", category: "muc",
-    price: 48000, wholesale_price: 38000,
-    badge: "Sale", badge_type: "sale",
-    origin: "🇻🇳 Việt Nam", rating: 4.7, reviews: 185,
-  },
-  {
-    id: 4,  name: "Cá Sặc Rằn Sấy Khô",
-    img: null, emoji: "🐟", category: "ca",
-    price: 35000, wholesale_price: 28000,
-    badge: null, badge_type: "",
-    origin: "🇻🇳 Việt Nam", rating: 4.5, reviews: 290,
-  },
-  {
-    id: 5,  name: "Heo Quay Chà Bông",
+    id: 2,  name: "Khô Heo Dẻo Mix Tỏi Lý Sơn",
     img: null, emoji: "🐷", category: "heo",
-    price: 45000, wholesale_price: 36000,
+    price: 290000, wholesale_price: 232000,
+    badge: "Bán chạy", badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.9, reviews: 215,
+    description: "Thịt heo chọn lọc, tẩm tỏi Lý Sơn đặc sản, sấy dẻo mềm đúng vị. Thơm ngon, không chất bảo quản. Sản phẩm bán chạy nhất tại Bếp Của Mẹ.",
+  },
+  {
+    id: 3,  name: "Khô Heo Cháy Tỏi",
+    img: null, emoji: "🥓", category: "heo",
+    price: 290000, wholesale_price: 232000,
+    badge: "Hot", badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 180,
+  },
+  {
+    id: 4,  name: "Thiêu Sợi Nướng Than",
+    img: null, emoji: "🔥", category: "mon-che-bien",
+    price: 190000, wholesale_price: 152000,
+    badge: "Bán chạy", badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 290,
+  },
+  {
+    id: 5,  name: "Khô Bò Đen Rim Sả Ớt Kèm Nước Bò",
+    img: null, emoji: "🥩", category: "bo",
+    price: 180000, wholesale_price: 144000,
     badge: "Yêu thích", badge_type: "",
     origin: "🇻🇳 Việt Nam", rating: 4.9, reviews: 410,
+    description: "Bò rim sả ớt cháy cạnh, kèm hũ nước bò cô đặc đậm đà. Cay thơm đúng điệu, ăn một lần là nhớ mãi. Được khách hàng yêu thích nhất trong dòng bò khô.",
   },
   {
-    id: 6,  name: "Gà Sấy Mắm Ớt",
-    img: null, emoji: "🍗", category: "ga",
-    price: 42000, wholesale_price: 33000,
-    badge: "Hot", badge_type: "",
-    origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 275,
-  },
-  {
-    id: 7,  name: "Chả Bông Heo Lon 200g",
-    img: null, emoji: "🫙", category: "cha-bong",
-    price: 60000, wholesale_price: 48000,
-    badge: "Mới", badge_type: "new",
-    origin: "🇻🇳 Việt Nam", rating: 4.9, reviews: 198,
-  },
-  {
-    id: 8,  name: "Cơm Cháy Nước Mắm Tỏi",
-    img: null, emoji: "🍚", category: "com-chay",
-    price: 30000, wholesale_price: 24000,
+    id: 6,  name: "Khô Dừa Tẩm Muối Ớt",
+    img: null, emoji: "🥥", category: "trai-cay-say",
+    price: 180000, wholesale_price: 144000,
     badge: null, badge_type: "",
-    origin: "🇻🇳 Việt Nam", rating: 4.4, reviews: 160,
+    origin: "🇻🇳 Việt Nam", rating: 4.6, reviews: 175,
   },
   {
-    id: 9,  name: "Me Chua Ngọt Rim Muối",
-    img: null, emoji: "🍋", category: "me-xi-muoi",
-    price: 22000, wholesale_price: 17000,
+    id: 7,  name: "Da Heo Chiên Giòn Tỏi Ớt",
+    img: null, emoji: "🍖", category: "heo",
+    price: 120000, wholesale_price: 96000,
     badge: "Sale", badge_type: "sale",
-    origin: "🇻🇳 Việt Nam", rating: 4.9, reviews: 330,
+    origin: "🇻🇳 Việt Nam", rating: 4.7, reviews: 198,
   },
   {
-    id: 10, name: "Xoài Sấy Dẻo",
-    img: null, emoji: "🥭", category: "trai-cay-say",
-    price: 38000, wholesale_price: 30000,
+    id: 8,  name: "Bánh Tráng Hành Phi",
+    img: null, emoji: "🫓", category: "banh-trang",
+    price: 120000, wholesale_price: 96000,
     badge: null, badge_type: "",
-    origin: "🇻🇳 Việt Nam", rating: 4.3, reviews: 500,
+    origin: "🇻🇳 Việt Nam", rating: 4.5, reviews: 160,
   },
   {
-    id: 11, name: "Rong Biển Tẩm Gia Vị",
-    img: null, emoji: "🌿", category: "rong-bien",
-    price: 28000, wholesale_price: 22000,
-    badge: "Hot", badge_type: "",
-    origin: "🇰🇷 Hàn Quốc", rating: 4.9, reviews: 260,
+    id: 9,  name: "Bánh Tráng Vỏ Ớt Rim",
+    img: null, emoji: "🌶️", category: "banh-trang",
+    price: 90000, wholesale_price: 72000,
+    badge: "Sale", badge_type: "sale",
+    origin: "🇻🇳 Việt Nam", rating: 4.7, reviews: 330,
   },
   {
-    id: 12, name: "Snack Nhập Khẩu Hàn Quốc",
-    img: null, emoji: "🍿", category: "nhap-khau",
-    price: 45000, wholesale_price: 36000,
-    badge: null, badge_type: "",
-    origin: "🇰🇷 Hàn Quốc", rating: 4.2, reviews: 145,
-  },
-  {
-    id: 13, name: "Trà Ô Long Đài Loan",
-    img: null, emoji: "🍵", category: "tra-nuoc",
-    price: 32000, wholesale_price: 25000,
+    id: 10, name: "Set Bánh Tráng Sài Gòn",
+    img: null, emoji: "🎁", category: "banh-trang",
+    price: 220000, wholesale_price: 176000,
     badge: "Mới", badge_type: "new",
-    origin: "🇹🇼 Đài Loan", rating: 4.6, reviews: 112,
+    origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 140,
   },
   {
-    id: 14, name: "Kẹo Dừa Bến Tre",
-    img: null, emoji: "🍬", category: "keo",
-    price: 20000, wholesale_price: 16000,
+    id: 11, name: "Đậu Tầm Rim Me Hạt Dẻo",
+    img: null, emoji: "🫛", category: "dau-hat",
+    price: 180000, wholesale_price: 144000,
+    badge: "Hot", badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.9, reviews: 260,
+  },
+  {
+    id: 12, name: "Đá Me Tắc Hạt Dẻo",
+    img: null, emoji: "🍋", category: "me-xi-muoi",
+    price: 160000, wholesale_price: 128000,
     badge: null, badge_type: "",
     origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 380,
   },
   {
-    id: 15, name: "Bánh Pía Đậu Xanh",
-    img: null, emoji: "🥮", category: "banh",
-    price: 35000, wholesale_price: 28000,
+    id: 13, name: "Chùm Ruột Rim Muối Tắc",
+    img: null, emoji: "🍊", category: "trai-cay-say",
+    price: 160000, wholesale_price: 128000,
     badge: null, badge_type: "",
-    origin: "🇻🇳 Việt Nam", rating: 4.4, reviews: 220,
+    origin: "🇻🇳 Việt Nam", rating: 4.7, reviews: 220,
   },
   {
-    id: 16, name: "Hạt Điều Rang Muối",
-    img: null, emoji: "🥜", category: "dau-hat",
-    price: 65000, wholesale_price: 52000,
+    id: 14, name: "Bưởi Rim Sắc Đường Phèn",
+    img: null, emoji: "🍈", category: "trai-cay-say",
+    price: 160000, wholesale_price: 128000,
+    badge: null, badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.6, reviews: 195,
+  },
+  {
+    id: 15, name: "Hành Phi Bắc Loại 1",
+    img: null, emoji: "🧅", category: "gia-vi",
+    price: 160000, wholesale_price: 128000,
+    badge: "Bán chạy", badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.9, reviews: 500,
+    description: "Hành phi Bắc loại 1, giòn thơm, màu vàng óng tự nhiên. Dùng để rắc cháo, bún, phở, hay các món ăn hàng ngày. Đóng gói hút chân không, bảo quản lâu.",
+  },
+  {
+    id: 16, name: "Bánh Bột Lọc Chín",
+    img: null, emoji: "🍡", category: "mon-che-bien",
+    price: 120000, wholesale_price: 96000,
+    badge: null, badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.7, reviews: 210,
+  },
+  {
+    id: 17, name: "Bánh Ít Nếp Xào (5 cái)",
+    img: null, emoji: "🥟", category: "mon-che-bien",
+    price: 80000, wholesale_price: 64000,
+    badge: "Sale", badge_type: "sale",
+    origin: "🇻🇳 Việt Nam", rating: 4.6, reviews: 145,
+  },
+  {
+    id: 18, name: "Bánh Ít Nếp Xào (10 cái)",
+    img: null, emoji: "🥟", category: "mon-che-bien",
+    price: 150000, wholesale_price: 120000,
+    badge: null, badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.6, reviews: 112,
+  },
+  {
+    id: 19, name: "Dồi Sả Ớt Kèm Mắm Nêm",
+    img: null, emoji: "🌭", category: "mon-che-bien",
+    price: 190000, wholesale_price: 152000,
+    badge: "Hot", badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 275,
+  },
+  {
+    id: 20, name: "Chả Đùm Trứng",
+    img: null, emoji: "🥚", category: "gio-cha-nem",
+    price: 180000, wholesale_price: 144000,
+    badge: null, badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.7, reviews: 190,
+  },
+  {
+    id: 21, name: "Chả Bách Hoa Lục Trứng",
+    img: null, emoji: "🎆", category: "gio-cha-nem",
+    price: 180000, wholesale_price: 144000,
+    badge: "Mới", badge_type: "new",
+    origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 130,
+  },
+  {
+    id: 22, name: "Sốt Me Chua Cay",
+    img: null, emoji: "🫙", category: "gia-vi",
+    price: 140000, wholesale_price: 112000,
+    badge: null, badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 310,
+  },
+  {
+    id: 23, name: "Set Chấm Ngũ Vị",
+    img: null, emoji: "🎁", category: "gia-vi",
+    price: 230000, wholesale_price: 184000,
+    badge: "Mới", badge_type: "new",
+    origin: "🇻🇳 Việt Nam", rating: 4.9, reviews: 95,
+  },
+  {
+    id: 24, name: "Set Chấm Đồ Nướng",
+    img: null, emoji: "🔥", category: "gia-vi",
+    price: 230000, wholesale_price: 184000,
+    badge: null, badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 115,
+  },
+  {
+    id: 25, name: "Set Chấm 3 Vị",
+    img: null, emoji: "🫙", category: "gia-vi",
+    price: 160000, wholesale_price: 128000,
+    badge: null, badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.7, reviews: 150,
+  },
+  {
+    id: 26, name: "Set Chấm Chua Cay",
+    img: null, emoji: "🌶️", category: "gia-vi",
+    price: 160000, wholesale_price: 128000,
+    badge: "Bán chạy", badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.9, reviews: 240,
+  },
+  {
+    id: 27, name: "Set Muối Ớt Tứ Xuyên",
+    img: null, emoji: "🌶️", category: "gia-vi",
+    price: 200000, wholesale_price: 160000,
+    badge: "Hot", badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 185,
+  },
+  {
+    id: 28, name: "Mắm Mực Chua Pha Sẵn",
+    img: null, emoji: "🦑", category: "muc",
+    price: 220000, wholesale_price: 176000,
+    badge: "Bán chạy", badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 210,
+  },
+  {
+    id: 29, name: "Mắm Gỏi Thịt Lọc Sợi Phi Lê",
+    img: null, emoji: "🫙", category: "mon-che-bien",
+    price: 180000, wholesale_price: 144000,
+    badge: null, badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.7, reviews: 165,
+  },
+  {
+    id: 30, name: "Mắm Nêm Đà Nẵng",
+    img: null, emoji: "🍶", category: "gia-vi",
+    price: 140000, wholesale_price: 112000,
+    badge: null, badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.7, reviews: 280,
+  },
+  {
+    id: 31, name: "Ba Khía Mắm Tắc",
+    img: null, emoji: "🦀", category: "mon-che-bien",
+    price: 120000, wholesale_price: 96000,
+    badge: "Hot", badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.9, reviews: 350,
+    description: "Ba khía muối mắm tắc đặc sản miền Tây Nam Bộ. Vị mặn ngọt chua cay hài hòa, thịt ba khía chắc thơm. Ăn kèm cơm trắng nóng là cực phẩm.",
+  },
+  {
+    id: 32, name: "Cá Cơm Biển Lớn Kho Cay",
+    img: null, emoji: "🐟", category: "ca",
+    price: 260000, wholesale_price: 208000,
     badge: "Hot", badge_type: "",
     origin: "🇻🇳 Việt Nam", rating: 4.9, reviews: 190,
+  },
+  {
+    id: 33, name: "Cá Ngừ Nướng Ngâm Nước Mắm",
+    img: null, emoji: "🐠", category: "ca",
+    price: 220000, wholesale_price: 176000,
+    badge: "Bán chạy", badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 225,
+  },
+  {
+    id: 34, name: "Kiều Quế Mắm Kẹo",
+    img: null, emoji: "🍯", category: "mon-che-bien",
+    price: 160000, wholesale_price: 128000,
+    badge: null, badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.6, reviews: 135,
+  },
+  {
+    id: 35, name: "Kiều Quế Đường Nhỏ",
+    img: null, emoji: "🍯", category: "mon-che-bien",
+    price: 160000, wholesale_price: 128000,
+    badge: null, badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.6, reviews: 120,
+  },
+  {
+    id: 36, name: "Kiều Quế Đường Lớn",
+    img: null, emoji: "🍯", category: "mon-che-bien",
+    price: 280000, wholesale_price: 224000,
+    badge: "Mới", badge_type: "new",
+    origin: "🇻🇳 Việt Nam", rating: 4.7, reviews: 85,
+  },
+  {
+    id: 37, name: "Nước Sâm 24 Vị",
+    img: null, emoji: "🍵", category: "tra-nuoc",
+    price: 95000, wholesale_price: 76000,
+    badge: "Mới", badge_type: "new",
+    origin: "🇻🇳 Việt Nam", rating: 4.8, reviews: 155,
+  },
+  {
+    id: 38, name: "Nước Sâm Rong Biển Nhãn Nhục",
+    img: null, emoji: "🍵", category: "tra-nuoc",
+    price: 95000, wholesale_price: 76000,
+    badge: null, badge_type: "",
+    origin: "🇻🇳 Việt Nam", rating: 4.7, reviews: 110,
   },
 ];
 
@@ -151,6 +310,13 @@ function getEffectivePrice(price, qty) {
   const d = getSkuDiscount(qty);
   return d > 0 ? Math.round(price * (1 - d)) : price;
 }
+function isWholesaleUser() {
+  return getCurrentUser()?.customerType === 'wholesale';
+}
+// Returns effective unit price for a cart item based on customer type
+function getItemPrice(item) {
+  return isWholesaleUser() ? (item.wholesale_price || item.price) : item.price;
+}
 
 // ===== SUPABASE BACKEND =====
 // Tạo project tại supabase.com → Settings → API → dán vào đây
@@ -186,7 +352,7 @@ function simpleHash(str) {
   return (h >>> 0).toString(36);
 }
 
-async function authRegister(name, phone, email, password) {
+async function authRegister(name, phone, email, password, customerType = 'retail') {
   const hash = simpleHash(password);
   const id   = 'u_' + phone.replace(/\D/g, '');
 
@@ -196,7 +362,7 @@ async function authRegister(name, phone, email, password) {
     if (existing) return { ok: false, msg: 'Số điện thoại đã được đăng ký!' };
     const { error } = await _sb.from('users').insert({
       id, name, phone, email, password_hash: hash,
-      total_spent: 0, tier: 'member', order_count: 0,
+      total_spent: 0, tier: 'member', order_count: 0, customer_type: customerType,
     });
     if (error) return { ok: false, msg: 'Lỗi đăng ký, thử lại!' };
   } else {
@@ -204,14 +370,14 @@ async function authRegister(name, phone, email, password) {
     const users = getUsers();
     if (users[id]) return { ok: false, msg: 'Số điện thoại đã được đăng ký!' };
     users[id] = { id, name, phone, email, password: hash,
-                  totalSpent: 0, orders: [], createdAt: new Date().toISOString() };
+                  totalSpent: 0, orders: [], customerType, createdAt: new Date().toISOString() };
     saveUsers(users);
   }
 
   // Cache session
   const users = getUsers();
   users[id] = { id, name, phone, email, password: hash,
-                totalSpent: 0, orders: [], createdAt: new Date().toISOString() };
+                totalSpent: 0, orders: [], customerType, createdAt: new Date().toISOString() };
   saveUsers(users);
   setCurrentUser(id);
   return { ok: true };
@@ -231,6 +397,7 @@ async function authLogin(phone, password) {
     users[u.id] = { ...(users[u.id] || {}),
       id: u.id, name: u.name, phone: u.phone, password: hash,
       totalSpent: u.total_spent || 0, tier: u.tier || 'member',
+      customerType: u.customer_type || 'retail',
       orders: users[u.id]?.orders || [],
     };
     saveUsers(users);
@@ -254,11 +421,18 @@ function authLogout() {
 }
 
 function addOrderToUser(orderData) {
-  // Cập nhật localStorage ngay lập tức
   const user = getCurrentUser();
+
+  // Chỉ tích điểm cho khách lẻ (Bug 3: dùng rawTotal = baseTotal trước ship)
+  const earnPoints = user && !orderData.isWholesale;
+  const spentDelta = orderData.rawTotal || orderData.grandTotal;
+
+  // Cập nhật localStorage ngay lập tức
   if (user) {
     const users = getUsers();
-    users[user.id].totalSpent = (users[user.id].totalSpent || 0) + orderData.grandTotal;
+    if (earnPoints) {
+      users[user.id].totalSpent = (users[user.id].totalSpent || 0) + spentDelta;
+    }
     if (!users[user.id].orders) users[user.id].orders = [];
     users[user.id].orders.unshift({
       code: orderData.orderCode, date: new Date().toISOString(),
@@ -271,25 +445,26 @@ function addOrderToUser(orderData) {
   // Gửi lên Supabase (fire-and-forget)
   if (_sb) {
     _sb.from('orders').insert({
-      order_code:  orderData.orderCode,
-      user_phone:  orderData.userPhone || null,
-      name:        orderData.name,
-      phone:       orderData.phone,
-      address:     orderData.address,
-      city:        orderData.city,
-      items:       orderData.items,
-      sub_total:   orderData.subTotal,
-      disc_amt:    orderData.discAmt,
-      ship_fee:    orderData.shipFee,
-      grand_total: orderData.grandTotal,
-      payment:     orderData.payment,
-      note:        orderData.note || '',
-      tier_name:   orderData.tierName || '',
+      order_code:   orderData.orderCode,
+      user_phone:   orderData.userPhone || null,
+      name:         orderData.name,
+      phone:        orderData.phone,
+      address:      orderData.address,
+      city:         orderData.city,
+      items:        orderData.items,
+      sub_total:    orderData.subTotal,
+      disc_amt:     orderData.discAmt,
+      ship_fee:     orderData.shipFee,
+      grand_total:  orderData.grandTotal,
+      payment:      orderData.payment,
+      note:         orderData.note || '',
+      tier_name:    orderData.tierName || '',
+      is_wholesale: orderData.isWholesale || false,
     }).then(({ error }) => { if (error) console.warn('Supabase order error:', error); });
 
-    // Cập nhật điểm tích lũy người dùng
-    if (orderData.userPhone && user) {
-      const newSpent = (user.totalSpent || 0) + orderData.grandTotal;
+    // Cập nhật điểm tích lũy — chỉ cho khách lẻ (Bug 3 fix)
+    if (earnPoints && orderData.userPhone) {
+      const newSpent = (user.totalSpent || 0) + spentDelta;
       const newTier  = getTier(newSpent).key;
       _sb.from('users').update({
         total_spent: newSpent,
@@ -309,18 +484,26 @@ function updateHeaderUser() {
   if (!user) {
     loginBtn.style.display = '';
     userMenu.style.display = 'none';
+    if (typeof getFiltered === 'function') renderProducts(getFiltered());
     return;
   }
   loginBtn.style.display = 'none';
   userMenu.style.display = '';
-  const tier = getTier(user.totalSpent);
+  const isWholesale = user.customerType === 'wholesale';
+  const tier = isWholesale ? null : getTier(user.totalSpent);
+  const tierBg = isWholesale
+    ? 'linear-gradient(135deg,#4a7c59,#6db98a)'
+    : tier.bg;
+  const tierLabel = isWholesale ? '📦 Khách Sỉ' : (tier.icon + ' ' + tier.name);
   const initials = user.name.split(' ').map(w => w[0]).slice(-2).join('').toUpperCase();
   document.getElementById('userAvatar').textContent = initials;
-  document.getElementById('userAvatar').style.background = tier.bg;
+  document.getElementById('userAvatar').style.background = tierBg;
   document.getElementById('userMenuName').textContent = user.name.split(' ').pop();
   const pill = document.getElementById('userMenuTier');
-  pill.textContent = tier.icon + ' ' + tier.name;
-  pill.style.background = tier.bg;
+  pill.textContent = tierLabel;
+  pill.style.background = tierBg;
+  // Re-render sản phẩm vì giá hiển thị phụ thuộc vào loại tài khoản
+  if (typeof getFiltered === 'function') renderProducts(getFiltered());
 }
 
 // ===== AUTH MODAL =====
@@ -380,18 +563,20 @@ async function submitRegister(e) {
   const origHTML = btn ? btn.innerHTML : '';
   const errEl    = document.getElementById('authError');
 
-  const name  = document.getElementById('regName').value.trim();
-  const phone = document.getElementById('regPhone').value.trim();
-  const email = document.getElementById('regEmail').value.trim();
-  const pass  = document.getElementById('regPass').value;
-  const pass2 = document.getElementById('regPass2').value;
+  const name         = document.getElementById('regName').value.trim();
+  const phone        = document.getElementById('regPhone').value.trim();
+  const email        = document.getElementById('regEmail').value.trim();
+  const pass         = document.getElementById('regPass').value;
+  const pass2        = document.getElementById('regPass2').value;
+  const ctypeEl      = document.querySelector('input[name="regCtype"]:checked');
+  const customerType = ctypeEl ? ctypeEl.value : 'retail';
   if (!validatePhone(phone)) { errEl.textContent = 'Số điện thoại phải đúng 10 chữ số!'; return; }
   if (!email)                { errEl.textContent = 'Vui lòng nhập email!'; return; }
   if (pass.length < 6)       { errEl.textContent = 'Mật khẩu ít nhất 6 ký tự!'; return; }
   if (pass !== pass2)        { errEl.textContent = 'Mật khẩu xác nhận không khớp!'; return; }
 
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang đăng ký…'; }
-  const res = await authRegister(name, phone, email, pass);
+  const res = await authRegister(name, phone, email, pass, customerType);
   if (btn) { btn.disabled = false; btn.innerHTML = origHTML; }
 
   if (!res.ok) { errEl.textContent = res.msg; return; }
@@ -482,51 +667,78 @@ function closeProfilePanel() {
 function renderProfilePanel() {
   const user = getCurrentUser();
   if (!user) return;
-  const tier     = getTier(user.totalSpent);
-  const nextTier = getNextTier(user.totalSpent);
-  const spent    = user.totalSpent || 0;
-  const progress = nextTier
-    ? Math.min(((spent - tier.min) / (nextTier.min - tier.min)) * 100, 100)
-    : 100;
+  const isWholesale = user.customerType === 'wholesale';
+  const wsBg = 'linear-gradient(135deg,#4a7c59,#6db98a)';
 
   document.getElementById('ppAvatar').textContent =
     user.name.split(' ').map(w => w[0]).slice(-2).join('').toUpperCase();
-  document.getElementById('ppAvatar').style.background = tier.bg;
+
   document.getElementById('ppName').textContent  = user.name;
   document.getElementById('ppPhone').textContent = user.phone;
 
-  const tierCard = document.getElementById('ppTierCard');
-  tierCard.style.background = tier.bg;
-  document.getElementById('ppTierIcon').textContent = tier.icon;
-  document.getElementById('ppTierName').textContent = tier.name;
-  document.getElementById('ppDiscount').textContent =
-    tier.discount > 0 ? `Giảm ${tier.discount * 100}% mỗi đơn` : 'Tích lũy để nhận ưu đãi';
-  document.getElementById('ppSpent').textContent = formatPrice(spent);
-
-  // Progress bar
-  const progWrap = document.getElementById('ppProgressWrap');
-  if (nextTier) {
-    const remain = nextTier.min - spent;
-    progWrap.innerHTML = `
+  if (isWholesale) {
+    // Khách sỉ — không có hệ thống hạng
+    document.getElementById('ppAvatar').style.background = wsBg;
+    const tierCard = document.getElementById('ppTierCard');
+    tierCard.style.background = wsBg;
+    document.getElementById('ppTierIcon').textContent = '📦';
+    document.getElementById('ppTierName').textContent = 'Khách Sỉ';
+    document.getElementById('ppDiscount').textContent = 'Áp dụng giá sỉ trên tất cả sản phẩm';
+    document.getElementById('ppSpent').textContent = '—';
+    document.getElementById('ppProgressWrap').innerHTML = `
       <div class="pp-prog-label">
-        <span>Đến hạng <strong>${nextTier.icon} ${nextTier.name}</strong></span>
-        <span>Còn <strong style="color:var(--amber)">${formatPrice(remain)}</strong></span>
+        <span style="color:#2F6B3F;font-weight:700">📦 Tài khoản khách sỉ không tích điểm thành viên</span>
+      </div>`;
+    document.getElementById('ppBenefits').innerHTML = `
+      <div class="pp-benefit-row active" style="border-color:#2F6B3F">
+        <span>📦 Giá sỉ tất cả sản phẩm</span>
+        <span style="color:#2F6B3F;font-weight:800">~−20%</span>
+        <span style="color:var(--text-muted);font-size:0.78rem">Luôn áp dụng</span>
       </div>
-      <div class="pp-prog-bar"><div class="pp-prog-fill" style="width:${progress}%;background:${nextTier.bg}"></div></div>`;
+      <div class="pp-benefit-row">
+        <span>🚚 Miễn phí giao hàng</span>
+        <span style="color:#2F6B3F;font-weight:800">0đ</span>
+        <span style="color:var(--text-muted);font-size:0.78rem">Đơn ≥ 700k</span>
+      </div>`;
   } else {
-    progWrap.innerHTML = `<div class="pp-prog-label"><span>🏅 Bạn đã đạt hạng cao nhất!</span></div>`;
+    // Khách lẻ — hệ thống tích điểm
+    const tier     = getTier(user.totalSpent);
+    const nextTier = getNextTier(user.totalSpent);
+    const spent    = user.totalSpent || 0;
+    const progress = nextTier
+      ? Math.min(((spent - tier.min) / (nextTier.min - tier.min)) * 100, 100)
+      : 100;
+
+    document.getElementById('ppAvatar').style.background = tier.bg;
+    const tierCard = document.getElementById('ppTierCard');
+    tierCard.style.background = tier.bg;
+    document.getElementById('ppTierIcon').textContent = tier.icon;
+    document.getElementById('ppTierName').textContent = tier.name;
+    document.getElementById('ppDiscount').textContent =
+      tier.discount > 0 ? `Giảm ${tier.discount * 100}% mỗi đơn` : 'Tích lũy để nhận ưu đãi';
+    document.getElementById('ppSpent').textContent = formatPrice(spent);
+
+    const progWrap = document.getElementById('ppProgressWrap');
+    if (nextTier) {
+      const remain = nextTier.min - spent;
+      progWrap.innerHTML = `
+        <div class="pp-prog-label">
+          <span>Đến hạng <strong>${nextTier.icon} ${nextTier.name}</strong></span>
+          <span>Còn <strong style="color:var(--amber)">${formatPrice(remain)}</strong></span>
+        </div>
+        <div class="pp-prog-bar"><div class="pp-prog-fill" style="width:${progress}%;background:${nextTier.bg}"></div></div>`;
+    } else {
+      progWrap.innerHTML = `<div class="pp-prog-label"><span>🏅 Bạn đã đạt hạng cao nhất!</span></div>`;
+    }
+
+    document.getElementById('ppBenefits').innerHTML = TIERS.filter(t => t.key !== 'member').map(t => `
+      <div class="pp-benefit-row ${t.key === tier.key ? 'active' : ''}" style="${t.key === tier.key ? 'border-color:'+t.color : ''}">
+        <span>${t.icon} ${t.name}</span>
+        <span style="color:${t.color};font-weight:800">${t.discount > 0 ? '-' + (t.discount*100) + '%' : '0%'}</span>
+        <span style="color:var(--text-muted);font-size:0.78rem">&gt; ${formatPrice(t.min)}</span>
+      </div>`).join('');
   }
 
-  // Tier benefits table
-  document.getElementById('ppBenefits').innerHTML = TIERS.filter(t => t.key !== 'member').map(t => `
-    <div class="pp-benefit-row ${t.key === tier.key ? 'active' : ''}" style="${t.key === tier.key ? 'border-color:'+t.color : ''}">
-      <span>${t.icon} ${t.name}</span>
-      <span style="color:${t.color};font-weight:800">${t.discount > 0 ? '-' + (t.discount*100) + '%' : '0%'}</span>
-      <span style="color:var(--text-muted);font-size:0.78rem">&gt; ${formatPrice(t.min)}</span>
-    </div>`).join('');
-
-  // Order history
-  const orders = user.orders || [];
   loadOrderHistory();
 }
 
@@ -581,7 +793,43 @@ function renderProducts(list) {
     return;
   }
 
-  grid.innerHTML = list.map((p, i) => `
+  const wholesale = isWholesaleUser();
+
+  grid.innerHTML = list.map((p, i) => {
+    const wsPrice = p.wholesale_price || Math.round(p.price * 0.8);
+
+    const priceSection = wholesale ? `
+      <div class="price-grid">
+        <div class="pg-col retail" style="opacity:.5;text-decoration:line-through">
+          <span class="pg-lbl">Lẻ</span>
+          <span class="pg-price">${formatPrice(p.price)}</span>
+          <span class="pg-cond">—</span>
+        </div>
+        <div class="pg-col si5" style="flex:1.6;background:rgba(47,107,63,.12);border-radius:8px">
+          <span class="pg-lbl" style="color:#2F6B3F;font-weight:800">📦 Sỉ</span>
+          <span class="pg-price" style="color:#2F6B3F;font-size:1rem">${formatPrice(wsPrice)}</span>
+          <span class="pg-cond" style="color:#2F6B3F">Giá của bạn</span>
+        </div>
+      </div>` : `
+      <div class="price-grid">
+        <div class="pg-col retail">
+          <span class="pg-lbl">Lẻ</span>
+          <span class="pg-price">${formatPrice(p.price)}</span>
+          <span class="pg-cond">—</span>
+        </div>
+        <div class="pg-col si5">
+          <span class="pg-lbl">Sỉ</span>
+          <span class="pg-price">${formatPrice(wsPrice)}</span>
+          <span class="pg-cond">TK sỉ</span>
+        </div>
+        <div class="pg-col si10">
+          <span class="pg-lbl">Thành viên</span>
+          <span class="pg-price" style="font-size:.72rem">Đến −20%</span>
+          <span class="pg-cond">Tích điểm</span>
+        </div>
+      </div>`;
+
+    return `
     <div class="product-card" style="animation-delay:${i * 0.07}s" onclick="openProductDetail(${p.id})">
       ${p.badge ? `<div class="product-badge badge-${p.badge_type}">${p.badge}</div>` : ''}
       <button class="wishlist-btn ${wishlist.has(p.id) ? 'active' : ''}"
@@ -596,42 +844,25 @@ function renderProducts(list) {
       </div>
 
       <div class="product-body">
-        <div class="product-tag">${p.origin}</div>
         <div class="product-name">${p.name}</div>
         <div class="product-rating">
           <span class="stars">${renderStars(p.rating)}</span>
           <span class="rating-count">${p.rating} (${p.reviews})</span>
         </div>
         <div class="product-footer">
-          <div class="price-grid">
-            <div class="pg-col retail">
-              <span class="pg-lbl">Lẻ</span>
-              <span class="pg-price">${formatPrice(p.price)}</span>
-              <span class="pg-cond">—</span>
-            </div>
-            <div class="pg-col si5">
-              <span class="pg-lbl">Sỉ −5%</span>
-              <span class="pg-price">${formatPrice(Math.round(p.price * 0.95))}</span>
-              <span class="pg-cond">≥10 hộp</span>
-            </div>
-            <div class="pg-col si10">
-              <span class="pg-lbl">Sỉ −10%</span>
-              <span class="pg-price">${formatPrice(Math.round(p.price * 0.90))}</span>
-              <span class="pg-cond">≥30 hộp</span>
-            </div>
-          </div>
+          ${priceSection}
           <div class="pg-buy-section">
             <span class="pg-buy-label">MUA</span>
             <div class="pg-btn-row">
               <button class="pg-add-btn" onclick="event.stopPropagation();addToCartQty(${p.id},1)">+ 1 hộp</button>
-              <button class="pg-add-btn si5-add" onclick="event.stopPropagation();addToCartQty(${p.id},10)">+ 10 hộp</button>
-              <button class="pg-add-btn si10-add" onclick="event.stopPropagation();addToCartQty(${p.id},30)">+ 30 hộp</button>
+              <button class="pg-add-btn si5-add" onclick="event.stopPropagation();addToCartQty(${p.id},5)">+ 5 hộp</button>
+              <button class="pg-add-btn si10-add" onclick="event.stopPropagation();addToCartQty(${p.id},10)">+ 10 hộp</button>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function getFiltered() {
@@ -734,20 +965,21 @@ function updateCartUI() {
         <p>Giỏ hàng đang trống</p>
       </div>`;
   } else {
+    const wholesale = isWholesaleUser();
     itemsEl.innerHTML = cart.map(item => {
-      const skuDisc   = getSkuDiscount(item.qty);
-      const effPrice  = getEffectivePrice(item.price, item.qty);
-      const discBadge = skuDisc > 0
-        ? `<span class="sku-disc-badge">-${skuDisc * 100}% sỉ</span>`
-        : (item.qty >= 5 ? `<span class="sku-near-badge">còn ${10 - item.qty} để -5%</span>` : '');
+      const effPrice  = getItemPrice(item);
+      const isDisc    = wholesale && item.wholesale_price && item.wholesale_price < item.price;
+      const badge     = wholesale
+        ? `<span class="sku-disc-badge">Giá sỉ</span>`
+        : '';
       return `
       <div class="cart-item">
         <div class="ci-img">${item.img ? `<img src="${item.img}" style="width:100%;height:100%;object-fit:cover;border-radius:10px"/>` : item.emoji}</div>
         <div class="ci-body">
-          <div class="ci-name">${item.name} ${discBadge}</div>
+          <div class="ci-name">${item.name} ${badge}</div>
           <div class="ci-price">
             ${formatPrice(effPrice * item.qty)}
-            ${skuDisc > 0 ? `<span class="ci-price-orig">${formatPrice(item.price * item.qty)}</span>` : ''}
+            ${isDisc ? `<span class="ci-price-orig">${formatPrice(item.price * item.qty)}</span>` : ''}
           </div>
           <div class="ci-controls">
             <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
@@ -762,7 +994,7 @@ function updateCartUI() {
     }).join('');
   }
 
-  const subTotal = cart.reduce((s, i) => s + getEffectivePrice(i.price, i.qty) * i.qty, 0);
+  const subTotal = cart.reduce((s, i) => s + getItemPrice(i) * i.qty, 0);
   const freeShip = subTotal >= 700000;
   const shipFee = freeShip ? 0 : 30000;
   const grandTotal = subTotal + shipFee;
@@ -812,65 +1044,70 @@ function closeCheckout() {
 }
 
 function renderCheckoutSummary() {
+  const wholesale  = isWholesaleUser();
   const user       = getCurrentUser();
-  const tier       = user ? getTier(user.totalSpent) : null;
+  const tier       = (!wholesale && user) ? getTier(user.totalSpent) : null;
   const tierDisc   = tier ? tier.discount : 0;
 
-  // Raw total (giá lẻ * số lượng)
-  const rawTotal   = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  // Tiết kiệm từ SKU bulk discount
-  const skuSaving  = cart.reduce((s, i) => {
-    const d = getSkuDiscount(i.qty);
-    return s + (d > 0 ? Math.round(i.price * d) * i.qty : 0);
-  }, 0);
-  const afterSku   = rawTotal - skuSaving;
-  // Giảm hạng thành viên (tính trên giá sau SKU)
-  const tierAmt    = Math.round(afterSku * tierDisc);
-  const afterDisc  = afterSku - tierAmt;
-  const freeShip   = afterDisc >= 700000;
+  // Base price depends on customer type
+  const baseTotal  = cart.reduce((s, i) => s + getItemPrice(i) * i.qty, 0);
+  // For wholesale: show savings vs retail price
+  const wholeSave  = wholesale
+    ? cart.reduce((s, i) => s + (i.price - (i.wholesale_price || i.price)) * i.qty, 0)
+    : 0;
+  // Tier discount (retail only)
+  const tierAmt    = Math.round(baseTotal * tierDisc);
+  const afterDisc  = baseTotal - tierAmt;
+  // Free ship tính trên baseTotal (trước tier discount) để đồng bộ với cart sidebar
+  const freeShip   = baseTotal >= 700000;
   const shipFee    = freeShip ? 0 : 30000;
   const grand      = afterDisc + shipFee;
 
   document.getElementById('coOrderItems').innerHTML = cart.map(item => {
-    const skuD = getSkuDiscount(item.qty);
-    const effP = getEffectivePrice(item.price, item.qty);
+    const effP = getItemPrice(item);
+    const badge = wholesale && item.wholesale_price && item.wholesale_price < item.price
+      ? ` <span class="sku-disc-badge">Giá sỉ</span>` : '';
     return `
     <div class="co-order-item">
-      <div class="co-item-emoji">${item.emoji}</div>
+      <div class="co-item-emoji">${item.img ? `<img src="${item.img}" style="width:44px;height:44px;object-fit:cover;border-radius:8px"/>` : item.emoji}</div>
       <div class="co-item-body">
-        <div class="co-item-name">${item.name}${skuD > 0 ? ` <span class="sku-disc-badge">-${skuD*100}%</span>` : ''}</div>
+        <div class="co-item-name">${item.name}${badge}</div>
         <div class="co-item-qty">x${item.qty} × ${formatPrice(effP)}</div>
       </div>
       <div class="co-item-price">${formatPrice(effP * item.qty)}</div>
     </div>`;
   }).join('');
 
-  const skuRow = skuSaving > 0 ? `
-    <div class="co-summary-row" style="color:#2F6B3F;font-weight:700">
-      <span>📦 Giảm giá sỉ (theo số lượng)</span>
-      <span>-${formatPrice(skuSaving)}</span>
-    </div>` : '';
+  const retailTotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
 
-  const tierRow = (tier && tierDisc > 0) ? `
+  const discRow = wholesale && wholeSave > 0 ? `
+    <div class="co-summary-row" style="color:#2F6B3F;font-weight:700">
+      <span>📦 Giảm giá sỉ</span>
+      <span>-${formatPrice(wholeSave)}</span>
+    </div>` : (!wholesale && tier && tierDisc > 0) ? `
     <div class="co-summary-row" style="color:var(--green);font-weight:700">
       <span>${tier.icon} Ưu đãi ${tier.name} (${tierDisc*100}%)</span>
       <span>-${formatPrice(tierAmt)}</span>
     </div>` : '';
 
-  const loginHint = !user ? `
+  const wholesaleNotice = wholesale ? `
+    <div style="background:#fff3cd;border:1.5px solid #ffc107;border-radius:8px;padding:9px 12px;font-size:.8rem;color:#856404;margin:0 0 8px">
+      📦 <strong>Tài khoản khách sỉ:</strong> áp dụng giá sỉ, không tích điểm thành viên
+    </div>` : '';
+
+  const loginHint = (!user && !wholesale) ? `
     <div class="co-login-hint">
       <i class="fa fa-tag"></i>
       <span><a href="#" onclick="event.preventDefault();closeCheckout();openAuthModal('login')">Đăng nhập</a> để dùng ưu đãi thành viên</span>
     </div>` : '';
 
   document.getElementById('coOrderSummary').innerHTML = `
-    ${loginHint}
+    ${wholesaleNotice}${loginHint}
     <div class="co-summary-row">
       <span>Tạm tính (${cart.reduce((s,i)=>s+i.qty,0)} món)</span>
-      <span>${formatPrice(rawTotal)}</span>
+      <span>${formatPrice(wholesale ? retailTotal : baseTotal)}</span>
     </div>
-    ${skuRow}
-    ${tierRow}
+    ${discRow}
     <div class="co-summary-row ${freeShip ? 'free-ship' : ''}">
       <span>Phí giao hàng</span>
       <span>${freeShip ? '✅ Miễn phí' : formatPrice(shipFee)}</span>
@@ -929,20 +1166,21 @@ async function submitCheckout(e) {
 
   // Tạo mã đơn hàng ngẫu nhiên
   const orderCode    = 'BCM' + Date.now().toString().slice(-6);
+  const wholesale    = isWholesaleUser();
   const user         = getCurrentUser();
-  const tier         = user ? getTier(user.totalSpent) : null;
+  const tier         = (!wholesale && user) ? getTier(user.totalSpent) : null;
   const tierDisc     = tier ? tier.discount : 0;
-  const rawTotal     = cart.reduce((s,i) => s+i.price*i.qty, 0);
-  const skuSaving    = cart.reduce((s,i) => {
-    const d = getSkuDiscount(i.qty);
-    return s + (d > 0 ? Math.round(i.price * d) * i.qty : 0);
-  }, 0);
-  const afterSku     = rawTotal - skuSaving;
-  const tierAmt      = Math.round(afterSku * tierDisc);
-  const discAmt      = skuSaving + tierAmt;
-  const afterDisc    = afterSku - tierAmt;
-  const subTotal     = rawTotal;
-  const shipFee      = afterDisc >= 700000 ? 0 : 30000;
+  const retailTotal  = cart.reduce((s,i) => s+i.price*i.qty, 0);
+  const baseTotal    = cart.reduce((s,i) => s+getItemPrice(i)*i.qty, 0);
+  const wholeSave    = wholesale
+    ? cart.reduce((s,i) => s+(i.price-(i.wholesale_price||i.price))*i.qty, 0)
+    : 0;
+  const tierAmt      = Math.round(baseTotal * tierDisc);
+  const discAmt      = wholeSave + tierAmt;
+  const afterDisc    = baseTotal - tierAmt;
+  const subTotal     = wholesale ? retailTotal : baseTotal;
+  // Free ship tính trên baseTotal (trước tier discount), đồng bộ cart sidebar
+  const shipFee      = baseTotal >= 700000 ? 0 : 30000;
   const grandTotal   = afterDisc + shipFee;
   const paymentLabel = { cod: 'COD', transfer: 'Chuyển khoản', momo: 'MoMo', vnpay: 'VNPay' }[payment] || payment;
   const itemsStr     = cart.map(i => `${i.name} x${i.qty}`).join(', ');
@@ -954,6 +1192,8 @@ async function submitCheckout(e) {
     payment, note,
     userPhone: user ? user.phone : '',
     tierName:  tier ? tier.name : '',
+    isWholesale: wholesale,
+    rawTotal:    baseTotal,   // Bug 3 fix: dùng baseTotal (giá đã áp sỉ) không phải grandTotal
   });
   updateHeaderUser();
 
@@ -989,12 +1229,15 @@ async function submitCheckout(e) {
     <div style="font-size:0.82rem;color:var(--text-muted);text-align:center;line-height:1.8">
       Giao đến: ${address}, ${city}<br/>
       Tổng tiền: <strong style="color:var(--red)">${formatPrice(grandTotal)}</strong> · ${paymentLabel}
-      ${discAmt > 0 ? `<br/><span style="color:var(--green)">✅ Đã tiết kiệm ${formatPrice(discAmt)}${skuSaving > 0 ? ` (sỉ: ${formatPrice(skuSaving)}${tierAmt > 0 ? ` + ${tier.name}: ${formatPrice(tierAmt)}` : ''})` : tierAmt > 0 ? ` (ưu đãi ${tier.name})` : ''}</span>` : ''}
+      ${discAmt > 0 ? `<br/><span style="color:var(--green)">✅ Đã tiết kiệm ${formatPrice(discAmt)}${wholeSave > 0 ? ` (giá sỉ: ${formatPrice(wholeSave)}${tierAmt > 0 ? ` + ${tier.name}: ${formatPrice(tierAmt)}` : ''})` : tierAmt > 0 ? ` (ưu đãi ${tier?.name})` : ''}</span>` : ''}
+      ${wholesale ? `<br/><span style="color:#856404">📦 Đơn khách sỉ — không tích điểm</span>` : ''}
     </div>
-    ${user ? (() => {
-      const newUser = getCurrentUser();
-      const newTier = getTier(newUser.totalSpent);
-      const upgraded = tier && newTier.key !== tier.key;
+    ${(user && !wholesale) ? (() => {
+      const newUser  = getCurrentUser();
+      const oldTier  = tier || getTier(0);
+      const newTier  = getTier(newUser.totalSpent);
+      // Bug 2 fix: find the actual tier step we jumped to (handle multi-tier skips)
+      const upgraded = newTier.key !== oldTier.key;
       return upgraded
         ? `<div style="background:${newTier.bg};color:#fff;border-radius:12px;padding:12px 20px;text-align:center;font-weight:700">
              🎉 Chúc mừng! Bạn vừa lên hạng <strong>${newTier.icon} ${newTier.name}</strong>!
@@ -1010,10 +1253,32 @@ async function submitCheckout(e) {
 }
 
 // ===== CONTACT FORM =====
-function submitForm(e) {
+async function submitForm(e) {
   e.preventDefault();
+  const form = e.target;
+  const inputs = form.querySelectorAll('input, textarea, select');
+  const name = inputs[0]?.value?.trim() || '';
+  const phone = inputs[1]?.value?.trim() || '';
+  const address = inputs[2]?.value?.trim() || '';
+  const message = inputs[3]?.value?.trim() || '';
+  const payment = inputs[4]?.value || '';
+
+  const btn = form.querySelector('button[type="submit"]');
+  const origHTML = btn ? btn.innerHTML : '';
+
+  if (_sb) {
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang gửi…'; }
+    const { error } = await _sb.from('contacts').insert({ name, phone, address, message, payment });
+    if (btn) { btn.disabled = false; btn.innerHTML = origHTML; }
+    if (error) {
+      console.warn('Contact form error:', error);
+      showToast('❌ Lỗi gửi tin nhắn, vui lòng thử lại!');
+      return;
+    }
+  }
+
   showToast('📨 Đã gửi! Chúng tôi sẽ liên hệ trong 15 phút.');
-  e.target.reset();
+  form.reset();
 }
 
 // ===== TOAST =====
@@ -1197,6 +1462,8 @@ document.addEventListener('DOMContentLoaded', () => {
   createHeroParticles();
   initStatCounters();
   initReveal();
+  initScrollTop();
+  initNavScroll();
   setTimeout(initMagneticBtns, 500);
   setTimeout(initLiveNotif, 4000);
 });
@@ -1332,6 +1599,37 @@ function renderOrderList(el, orders) {
       </div>
     </div>`;
   }).join('');
+}
+
+// ===== SCROLL TO TOP =====
+function initScrollTop() {
+  const btn = document.getElementById('scrollTop');
+  if (!btn) return;
+  window.addEventListener('scroll', () => {
+    btn.classList.toggle('show', window.scrollY > 320);
+  }, { passive: true });
+}
+
+// ===== NAV ACTIVE ON SCROLL =====
+function initNavScroll() {
+  const sections = ['home', 'products', 'about', 'loyalty', 'contact'];
+  const navLinks = document.querySelectorAll('#desktopNav a');
+  if (!navLinks.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const id = entry.target.id;
+      navLinks.forEach(a => {
+        a.classList.toggle('nav-active', a.getAttribute('href') === '#' + id);
+      });
+    });
+  }, { threshold: 0.3, rootMargin: '-60px 0px -60px 0px' });
+
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
 }
 
 // ===== LIVE PURCHASE NOTIFICATION =====

@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -60,7 +61,7 @@
 
   <link rel="stylesheet" href="style.css"/>
   <!-- font-display=swap: tránh text ẩn khi chờ font -->
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Mulish:wght@300;400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
   <!-- defer: không chặn render HTML -->
@@ -149,15 +150,18 @@
     </div>
 
     <div class="hero-visual">
-      <div class="hero-ring">
-        <div class="hero-ring-inner">
-          <div class="orbit-item" style="top:0%;left:50%;transform:translateX(-50%)">🍟</div>
-          <div class="orbit-item" style="top:15%;right:-10%">🍫</div>
-          <div class="orbit-item" style="bottom:15%;right:-10%">🧃</div>
-          <div class="orbit-item" style="bottom:0%;left:50%;transform:translateX(-50%)">🍬</div>
-          <div class="orbit-item" style="bottom:15%;left:-10%">🍪</div>
-          <div class="orbit-item" style="top:15%;left:-10%">🥨</div>
-          <div class="hero-center-emoji">🍱</div>
+      <div class="strips-wrap">
+        <div class="scroll-strip s1">
+          <div class="si">🌿</div><div class="si">🐷</div><div class="si">🦀</div><div class="si">🍵</div><div class="si">🥩</div>
+          <div class="si">🌿</div><div class="si">🐷</div><div class="si">🦀</div><div class="si">🍵</div><div class="si">🥩</div>
+        </div>
+        <div class="scroll-strip s2">
+          <div class="si">🫙</div><div class="si">🌶️</div><div class="si">🦑</div><div class="si">🧅</div><div class="si">🍖</div>
+          <div class="si">🫙</div><div class="si">🌶️</div><div class="si">🦑</div><div class="si">🧅</div><div class="si">🍖</div>
+        </div>
+        <div class="scroll-strip s3">
+          <div class="si">🥥</div><div class="si">🍋</div><div class="si">🐟</div><div class="si">🎁</div><div class="si">🫛</div>
+          <div class="si">🥥</div><div class="si">🍋</div><div class="si">🐟</div><div class="si">🎁</div><div class="si">🫛</div>
         </div>
       </div>
     </div>
@@ -174,31 +178,19 @@
     </div>
     <div class="cat-filters">
       <button class="cat-btn active" onclick="filterCategory('all', this)">Tất cả</button>
-      <button class="cat-btn" onclick="filterCategory('banh-trang', this)">Bánh tráng</button>
-      <button class="cat-btn" onclick="filterCategory('bo', this)">Bò</button>
-      <button class="cat-btn" onclick="filterCategory('muc', this)">Mực</button>
-      <button class="cat-btn" onclick="filterCategory('ca', this)">Cá</button>
-      <button class="cat-btn" onclick="filterCategory('heo', this)">Heo</button>
-      <button class="cat-btn" onclick="filterCategory('ga', this)">Gà</button>
-      <button class="cat-btn" onclick="filterCategory('cha-bong', this)">Chả bông</button>
-      <button class="cat-btn" onclick="filterCategory('com-chay', this)">Cơm cháy</button>
-      <button class="cat-btn" onclick="filterCategory('mon-ngon-que-nha', this)">Món Ngon Quê Nhà</button>
-      <button class="cat-btn" onclick="filterCategory('me-xi-muoi', this)">Me - Xi Muối</button>
-      <button class="cat-btn" onclick="filterCategory('trai-cay-say', this)">Trái cây sấy - rim - muối ớt</button>
-      <button class="cat-btn" onclick="filterCategory('rong-bien', this)">Rong biển</button>
-      <button class="cat-btn" onclick="filterCategory('nhap-khau', this)">Đồ ăn vặt NHẬP KHẨU</button>
-      <button class="cat-btn" onclick="filterCategory('tra-nuoc', this)">Trà - Nước giải nhiệt</button>
-      <button class="cat-btn" onclick="filterCategory('keo', this)">Kẹo</button>
-      <button class="cat-btn" onclick="filterCategory('banh', this)">Bánh</button>
-      <button class="cat-btn" onclick="filterCategory('mut', this)">Mứt</button>
-      <button class="cat-btn" onclick="filterCategory('dau-hat', this)">Đậu - Hạt dinh dưỡng</button>
-      <button class="cat-btn" onclick="filterCategory('banh-hat-healthy', this)">Bánh hạt - Ăn vặt healthy</button>
       <button class="cat-btn" onclick="filterCategory('mon-che-bien', this)">Món chế biến sẵn</button>
-      <button class="cat-btn" onclick="filterCategory('gia-vi', this)">Gia vị (nước chấm, muối, hành...)</button>
-      <button class="cat-btn" onclick="filterCategory('gio-cha-nem', this)">Các loại Giò - Chả - Nem</button>
-      <button class="cat-btn" onclick="filterCategory('tom', this)">Tôm</button>
-      <button class="cat-btn" onclick="filterCategory('lap-xuong', this)">Lạp xưởng</button>
-      <button class="cat-btn" onclick="filterCategory('mon-chay', this)">Món chay</button>
+      <button class="cat-btn" onclick="filterCategory('gia-vi', this)">Gia vị &amp; Nước chấm</button>
+      <button class="cat-btn" onclick="filterCategory('heo', this)">Heo</button>
+      <button class="cat-btn" onclick="filterCategory('bo', this)">Bò</button>
+      <button class="cat-btn" onclick="filterCategory('ca', this)">Cá</button>
+      <button class="cat-btn" onclick="filterCategory('muc', this)">Mực</button>
+      <button class="cat-btn" onclick="filterCategory('gio-cha-nem', this)">Giò - Chả - Nem</button>
+      <button class="cat-btn" onclick="filterCategory('banh-trang', this)">Bánh tráng</button>
+      <button class="cat-btn" onclick="filterCategory('trai-cay-say', this)">Trái cây rim - sấy</button>
+      <button class="cat-btn" onclick="filterCategory('rong-bien', this)">Rong biển</button>
+      <button class="cat-btn" onclick="filterCategory('dau-hat', this)">Đậu - Hạt</button>
+      <button class="cat-btn" onclick="filterCategory('me-xi-muoi', this)">Me - Xi muối</button>
+      <button class="cat-btn" onclick="filterCategory('tra-nuoc', this)">Trà - Nước sâm</button>
     </div>
     <div class="sort-bar">
       <span class="sort-label"><i class="fa fa-sort-amount-down"></i> Sắp xếp:</span>
@@ -613,6 +605,25 @@
   <!-- Đăng ký -->
   <form id="registerForm" onsubmit="submitRegister(event)" style="display:none">
     <div class="auth-field">
+      <label><i class="fa fa-users"></i> Loại tài khoản</label>
+      <div class="ctype-toggle">
+        <label class="ctype-opt">
+          <input type="radio" name="regCtype" value="retail" checked/>
+          <span class="ctype-box">
+            <strong>👤 Khách lẻ</strong>
+            <small>Tích điểm · Ưu đãi thành viên</small>
+          </span>
+        </label>
+        <label class="ctype-opt">
+          <input type="radio" name="regCtype" value="wholesale"/>
+          <span class="ctype-box">
+            <strong>📦 Khách sỉ</strong>
+            <small>Giá sỉ · Không tích điểm</small>
+          </span>
+        </label>
+      </div>
+    </div>
+    <div class="auth-field">
       <label><i class="fa fa-user"></i> Họ và tên</label>
       <input type="text" id="regName" placeholder="Nguyễn Văn A" required/>
     </div>
@@ -646,7 +657,7 @@
       <button class="forgot-back" onclick="switchAuthTab('login')">
         <i class="fa fa-arrow-left"></i> Quay lại
       </button>
-      <p style="margin:12px 0 4px;font-size:0.9rem;color:rgba(255,255,255,0.6)">
+      <p style="margin:12px 0 4px;font-size:0.9rem;color:var(--text-muted)">
         Nhập số điện thoại đã đăng ký — chúng tôi sẽ gửi link đặt lại mật khẩu về email của bạn.
       </p>
     </div>
@@ -662,7 +673,7 @@
     <div id="fpSuccess" style="display:none;text-align:center;padding:16px 0">
       <div style="font-size:2.5rem">📧</div>
       <p style="color:#00D4A0;font-weight:700;margin:8px 0 4px">Đã gửi email!</p>
-      <p style="font-size:0.85rem;color:rgba(255,255,255,0.5)">Kiểm tra hộp thư (kể cả Spam) và nhấn link để đặt lại mật khẩu.</p>
+      <p style="font-size:0.85rem;color:var(--text-muted)">Kiểm tra hộp thư (kể cả Spam) và nhấn link để đặt lại mật khẩu.</p>
     </div>
   </div>
 </div>
@@ -803,8 +814,13 @@
   </div>
 </div>
 
+<!-- ====== SCROLL TO TOP ====== -->
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Lên đầu trang">
+  <i class="fa fa-chevron-up"></i>
+</button>
+
 <!-- ====== ZALO WIDGET ====== -->
-<a class="zalo-widget" href="https://zalo.me/0909000000" target="_blank" rel="noopener" title="Chat Zalo với Bếp Của Mẹ">
+<a class="zalo-widget" href="https://zalo.me/0937895520" target="_blank" rel="noopener" title="Chat Zalo với Bếp Của Mẹ">
   <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
     <rect width="48" height="48" rx="12" fill="#0068FF"/>
     <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="white" font-size="20" font-weight="800" font-family="Arial,sans-serif">Z</text>
