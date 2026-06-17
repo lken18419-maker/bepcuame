@@ -711,6 +711,12 @@
     allUsers = users || [];
     allContacts = contacts || [];
 
+    // Đồng bộ filtered arrays ngay khi overview load xong
+    filteredOrders   = [...allOrders];
+    filteredProducts = [...allProducts];
+    filteredUsers    = [...allUsers];
+    filteredContacts = [...allContacts];
+
     const revenue = allOrders.filter(o => o.status !== 'cancelled')
       .reduce((s, o) => s + (Number(o.grand_total) || 0), 0);
     const pending = allOrders.filter(o => o.status === 'pending').length;
