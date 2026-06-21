@@ -313,9 +313,10 @@ function getEffectivePrice(price, qty) {
 function isWholesaleUser() {
   return getCurrentUser()?.customerType === 'wholesale';
 }
-// Returns effective unit price for a cart item based on customer type
+// Returns effective unit price for a cart item based on customer type + bulk qty
 function getItemPrice(item) {
-  return isWholesaleUser() ? (item.wholesale_price || item.price) : item.price;
+  if (isWholesaleUser()) return item.wholesale_price || item.price;
+  return getEffectivePrice(item.price, item.qty || 1);
 }
 
 // ===== SUPABASE BACKEND =====
@@ -934,7 +935,10 @@ function addToCartQty(id, qty) {
     cart.push({ ...product, qty });
   }
   updateCartUI();
-  showToast(`✅ Đã thêm ${qty} "${product.name}" vào giỏ!`);
+  const inCart = cart.find(i => i.id === id);
+  const disc = !isWholesaleUser() && inCart ? getSkuDiscount(inCart.qty) : 0;
+  const discNote = disc > 0 ? ` 🎉 đang giảm −${disc * 100}%!` : '';
+  showToast(`✅ Đã thêm ${qty} "${product.name}" vào giỏ!${discNote}`);
   const cartBtn = document.querySelector('.cart-btn');
   cartBtn.style.transform = 'scale(1.3)';
   setTimeout(() => cartBtn.style.transform = '', 250);
@@ -968,10 +972,11 @@ function updateCartUI() {
     const wholesale = isWholesaleUser();
     itemsEl.innerHTML = cart.map(item => {
       const effPrice  = getItemPrice(item);
-      const isDisc    = wholesale && item.wholesale_price && item.wholesale_price < item.price;
+      const skuD      = !wholesale && getSkuDiscount(item.qty);
+      const isDisc    = (wholesale && item.wholesale_price && item.wholesale_price < item.price) || skuD > 0;
       const badge     = wholesale
         ? `<span class="sku-disc-badge">Giá sỉ</span>`
-        : '';
+        : skuD > 0 ? `<span class="sku-disc-badge">−${skuD * 100}%</span>` : '';
       return `
       <div class="cart-item">
         <div class="ci-img">${item.img ? `<img src="${item.img}" style="width:100%;height:100%;object-fit:cover;border-radius:10px"/>` : item.emoji}</div>
@@ -1023,12 +1028,17 @@ function toggleCart() {
 // ===== CHECKOUT MODAL =====
 function checkout() {
   if (!cart.length) { showToast('🛒 Giỏ hàng đang trống!'); return; }
-  // Đóng cart sidebar
   document.getElementById('cartSidebar').classList.remove('open');
   document.getElementById('cartOverlay').classList.remove('active');
-  // Render order summary
   renderCheckoutSummary();
-  // Mở modal
+  // Tự điền thông tin nếu đã đăng nhập
+  const user = getCurrentUser();
+  if (user) {
+    const nameEl  = document.getElementById('co-name');
+    const phoneEl = document.getElementById('co-phone');
+    if (nameEl  && !nameEl.value)  nameEl.value  = user.name;
+    if (phoneEl && !phoneEl.value) phoneEl.value = user.phone;
+  }
   document.getElementById('checkoutModal').classList.add('open');
   document.getElementById('checkoutOverlay').classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -1049,24 +1059,22 @@ function renderCheckoutSummary() {
   const tier       = (!wholesale && user) ? getTier(user.totalSpent) : null;
   const tierDisc   = tier ? tier.discount : 0;
 
-  // Base price depends on customer type
-  const baseTotal  = cart.reduce((s, i) => s + getItemPrice(i) * i.qty, 0);
-  // For wholesale: show savings vs retail price
-  const wholeSave  = wholesale
-    ? cart.reduce((s, i) => s + (i.price - (i.wholesale_price || i.price)) * i.qty, 0)
-    : 0;
-  // Tier discount (retail only)
-  const tierAmt    = Math.round(baseTotal * tierDisc);
-  const afterDisc  = baseTotal - tierAmt;
-  // Free ship tính trên baseTotal (trước tier discount) để đồng bộ với cart sidebar
-  const freeShip   = baseTotal >= 700000;
-  const shipFee    = freeShip ? 0 : 30000;
-  const grand      = afterDisc + shipFee;
+  const retailTotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const baseTotal   = cart.reduce((s, i) => s + getItemPrice(i) * i.qty, 0);
+  const wholeSave   = wholesale ? retailTotal - baseTotal : 0;
+  const skuSaveAmt  = !wholesale ? retailTotal - baseTotal : 0;
+  const tierAmt     = Math.round(baseTotal * tierDisc);
+  const afterDisc   = baseTotal - tierAmt;
+  const freeShip    = baseTotal >= 700000;
+  const shipFee     = freeShip ? 0 : 30000;
+  const grand       = afterDisc + shipFee;
 
   document.getElementById('coOrderItems').innerHTML = cart.map(item => {
-    const effP = getItemPrice(item);
+    const effP  = getItemPrice(item);
+    const skuD  = !wholesale && getSkuDiscount(item.qty);
     const badge = wholesale && item.wholesale_price && item.wholesale_price < item.price
-      ? ` <span class="sku-disc-badge">Giá sỉ</span>` : '';
+      ? ` <span class="sku-disc-badge">Giá sỉ</span>`
+      : skuD > 0 ? ` <span class="sku-disc-badge">−${skuD * 100}%</span>` : '';
     return `
     <div class="co-order-item">
       <div class="co-item-emoji">${item.img ? `<img src="${item.img}" style="width:44px;height:44px;object-fit:cover;border-radius:8px"/>` : item.emoji}</div>
@@ -1078,17 +1086,17 @@ function renderCheckoutSummary() {
     </div>`;
   }).join('');
 
-  const retailTotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-
-  const discRow = wholesale && wholeSave > 0 ? `
-    <div class="co-summary-row" style="color:#2F6B3F;font-weight:700">
-      <span>📦 Giảm giá sỉ</span>
-      <span>-${formatPrice(wholeSave)}</span>
-    </div>` : (!wholesale && tier && tierDisc > 0) ? `
-    <div class="co-summary-row" style="color:var(--green);font-weight:700">
-      <span>${tier.icon} Ưu đãi ${tier.name} (${tierDisc*100}%)</span>
-      <span>-${formatPrice(tierAmt)}</span>
-    </div>` : '';
+  const discRows = [];
+  if (wholesale && wholeSave > 0)
+    discRows.push(`<div class="co-summary-row" style="color:#2F6B3F;font-weight:700">
+      <span>📦 Giảm giá sỉ</span><span>-${formatPrice(wholeSave)}</span></div>`);
+  if (!wholesale && skuSaveAmt > 0)
+    discRows.push(`<div class="co-summary-row" style="color:var(--orange);font-weight:700">
+      <span>📦 Giảm giá số lượng</span><span>-${formatPrice(skuSaveAmt)}</span></div>`);
+  if (!wholesale && tier && tierDisc > 0)
+    discRows.push(`<div class="co-summary-row" style="color:var(--green);font-weight:700">
+      <span>${tier.icon} Ưu đãi ${tier.name} (${tierDisc*100}%)</span><span>-${formatPrice(tierAmt)}</span></div>`);
+  const discRow = discRows.join('');
 
   const wholesaleNotice = wholesale ? `
     <div style="background:#fff3cd;border:1.5px solid #ffc107;border-radius:8px;padding:9px 12px;font-size:.8rem;color:#856404;margin:0 0 8px">
@@ -1472,6 +1480,47 @@ document.addEventListener('DOMContentLoaded', () => {
 function openProductDetail(id) {
   const p = products.find(pr => pr.id === id);
   if (!p) return;
+  const wsUser  = isWholesaleUser();
+  const wsPrice = p.wholesale_price || Math.round(p.price * 0.8);
+  const priceGrid = wsUser ? `
+    <div class="pd-price-grid" style="grid-template-columns:1fr 1fr">
+      <div class="pd-pc retail" style="opacity:.5">
+        <div class="pd-pc-lbl">Giá lẻ</div>
+        <div class="pd-pc-price" style="text-decoration:line-through">${formatPrice(p.price)}</div>
+        <div class="pd-pc-cond">—</div>
+      </div>
+      <div class="pd-pc si5" style="background:rgba(47,107,63,.12)">
+        <div class="pd-pc-lbl" style="color:#2F6B3F;background:rgba(47,107,63,.18)">📦 Giá sỉ</div>
+        <div class="pd-pc-price" style="color:#2F6B3F">${formatPrice(wsPrice)}</div>
+        <div class="pd-pc-cond" style="color:#2F6B3F">Của bạn</div>
+      </div>
+    </div>` : `
+    <div class="pd-price-grid">
+      <div class="pd-pc retail">
+        <div class="pd-pc-lbl">Lẻ</div>
+        <div class="pd-pc-price">${formatPrice(p.price)}</div>
+        <div class="pd-pc-cond">—</div>
+      </div>
+      <div class="pd-pc si5">
+        <div class="pd-pc-lbl">−5%</div>
+        <div class="pd-pc-price">${formatPrice(Math.round(p.price * 0.95))}</div>
+        <div class="pd-pc-cond">≥10 hộp</div>
+      </div>
+      <div class="pd-pc si10">
+        <div class="pd-pc-lbl">−10%</div>
+        <div class="pd-pc-price">${formatPrice(Math.round(p.price * 0.90))}</div>
+        <div class="pd-pc-cond">≥30 hộp</div>
+      </div>
+    </div>`;
+  const buyBtns = wsUser ? `
+    <button class="pd-buy-btn" onclick="addToCartQty(${p.id},1);closeProductDetail()">+ 1 hộp · ${formatPrice(wsPrice)}</button>
+    <button class="pd-buy-btn si5" onclick="addToCartQty(${p.id},10);closeProductDetail()">+ 10 hộp · ${formatPrice(wsPrice)} <span>Giá sỉ</span></button>
+    <button class="pd-buy-btn si10" onclick="addToCartQty(${p.id},30);closeProductDetail()">+ 30 hộp · ${formatPrice(wsPrice)} <span>Giá sỉ</span></button>
+  ` : `
+    <button class="pd-buy-btn" onclick="addToCartQty(${p.id},1);closeProductDetail()">+ 1 hộp · ${formatPrice(p.price)}</button>
+    <button class="pd-buy-btn si5" onclick="addToCartQty(${p.id},10);closeProductDetail()">+ 10 hộp · ${formatPrice(Math.round(p.price*0.95))} <span>−5%</span></button>
+    <button class="pd-buy-btn si10" onclick="addToCartQty(${p.id},30);closeProductDetail()">+ 30 hộp · ${formatPrice(Math.round(p.price*0.90))} <span>−10%</span></button>
+  `;
   document.getElementById('pdContent').innerHTML = `
     <div class="pd-hero">
       ${p.img ? `<img src="${p.img}" alt="${p.name}" class="pd-img"/>` : `<div class="pd-emoji">${p.emoji}</div>`}
@@ -1484,31 +1533,11 @@ function openProductDetail(id) {
         <span class="rating-count">${p.rating} · ${p.reviews} đánh giá</span>
       </div>
       ${p.badge ? `<span class="product-badge badge-${p.badge_type}" style="position:static;display:inline-block;margin-bottom:10px">${p.badge}</span>` : ''}
-      <div class="pd-price-grid">
-        <div class="pd-pc retail">
-          <div class="pd-pc-lbl">Lẻ</div>
-          <div class="pd-pc-price">${formatPrice(p.price)}</div>
-          <div class="pd-pc-cond">—</div>
-        </div>
-        <div class="pd-pc si5">
-          <div class="pd-pc-lbl">Sỉ −5%</div>
-          <div class="pd-pc-price">${formatPrice(Math.round(p.price * 0.95))}</div>
-          <div class="pd-pc-cond">≥10 hộp</div>
-        </div>
-        <div class="pd-pc si10">
-          <div class="pd-pc-lbl">Sỉ −10%</div>
-          <div class="pd-pc-price">${formatPrice(Math.round(p.price * 0.90))}</div>
-          <div class="pd-pc-cond">≥30 hộp</div>
-        </div>
-      </div>
+      ${priceGrid}
       ${p.description ? `<p class="pd-desc">${p.description}</p>` : ''}
       <div class="pd-buy-section">
         <span class="pd-buy-lbl">MUA HÀNG</span>
-        <div class="pd-buy-btns">
-          <button class="pd-buy-btn" onclick="addToCartQty(${p.id},1);closeProductDetail()">+ 1 hộp · ${formatPrice(p.price)}</button>
-          <button class="pd-buy-btn si5" onclick="addToCartQty(${p.id},10);closeProductDetail()">+ 10 hộp · ${formatPrice(Math.round(p.price*0.95))} <span>−5%</span></button>
-          <button class="pd-buy-btn si10" onclick="addToCartQty(${p.id},30);closeProductDetail()">+ 30 hộp · ${formatPrice(Math.round(p.price*0.90))} <span>−10%</span></button>
-        </div>
+        <div class="pd-buy-btns">${buyBtns}</div>
       </div>
     </div>
   `;
