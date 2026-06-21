@@ -403,6 +403,9 @@ async function authLogin(phone, password) {
     };
     saveUsers(users);
     setCurrentUser(u.id);
+    // Flush điểm/đơn hàng bị queue khi mạng yếu lần trước
+    flushPendingPoints();
+    flushPendingOrders();
     return { ok: true };
   }
 
@@ -421,10 +424,72 @@ function authLogout() {
   showToast('👋 Đã đăng xuất');
 }
 
-function addOrderToUser(orderData) {
+// ===== SUPABASE RETRY & OFFLINE SYNC QUEUE =====
+const _POINTS_Q = 'bcm_pending_points';
+const _ORDERS_Q = 'bcm_pending_orders';
+
+// Thử lại fn() tối đa maxAttempts lần, mỗi lần delay tăng dần
+async function sbRetry(fn, maxAttempts = 3) {
+  for (let i = 0; i < maxAttempts; i++) {
+    const result = await fn();
+    if (!result.error) return { ok: true };
+    if (i < maxAttempts - 1) await new Promise(r => setTimeout(r, 700 * (i + 1)));
+  }
+  return { ok: false };
+}
+
+// Lưu điểm chờ đồng bộ — chỉ giữ bản mới nhất mỗi phone
+function _queuePoints(phone, total_spent, tier, order_count) {
+  const q = JSON.parse(localStorage.getItem(_POINTS_Q) || '[]');
+  const kept = q.filter(x => x.phone !== phone);
+  kept.push({ phone, total_spent, tier, order_count, ts: Date.now() });
+  localStorage.setItem(_POINTS_Q, JSON.stringify(kept));
+}
+
+// Lưu đơn hàng chờ đồng bộ
+function _queueOrder(payload) {
+  const q = JSON.parse(localStorage.getItem(_ORDERS_Q) || '[]');
+  q.push({ ...payload, ts: Date.now() });
+  localStorage.setItem(_ORDERS_Q, JSON.stringify(q));
+}
+
+// Flush điểm tích lũy còn tồn đọng lên Supabase
+async function flushPendingPoints() {
+  if (!_sb) return;
+  const q = JSON.parse(localStorage.getItem(_POINTS_Q) || '[]');
+  if (!q.length) return;
+  const failed = [];
+  for (const item of q) {
+    const { error } = await _sb.from('users').update({
+      total_spent: item.total_spent, tier: item.tier, order_count: item.order_count,
+    }).eq('phone', item.phone);
+    if (error) failed.push(item);
+  }
+  localStorage.setItem(_POINTS_Q, JSON.stringify(failed));
+  if (failed.length < q.length)
+    console.info(`[BCM] Flushed ${q.length - failed.length} pending point sync(s)`);
+}
+
+// Flush đơn hàng còn tồn đọng lên Supabase
+async function flushPendingOrders() {
+  if (!_sb) return;
+  const q = JSON.parse(localStorage.getItem(_ORDERS_Q) || '[]');
+  if (!q.length) return;
+  const failed = [];
+  for (const o of q) {
+    const { ts, ...payload } = o;
+    const { error } = await _sb.from('orders').insert(payload);
+    if (error) failed.push(o);
+  }
+  localStorage.setItem(_ORDERS_Q, JSON.stringify(failed));
+  if (failed.length < q.length)
+    console.info(`[BCM] Flushed ${q.length - failed.length} pending order(s)`);
+}
+
+async function addOrderToUser(orderData) {
   const user = getCurrentUser();
 
-  // Chỉ tích điểm cho khách lẻ (Bug 3: dùng rawTotal = baseTotal trước ship)
+  // Chỉ tích điểm cho khách lẻ (rawTotal = baseTotal trước ship)
   const earnPoints = user && !orderData.isWholesale;
   const spentDelta = orderData.rawTotal || orderData.grandTotal;
 
@@ -443,37 +508,39 @@ function addOrderToUser(orderData) {
     saveUsers(users);
   }
 
-  // Gửi lên Supabase (fire-and-forget)
-  if (_sb) {
-    _sb.from('orders').insert({
-      order_code:   orderData.orderCode,
-      user_phone:   orderData.userPhone || null,
-      name:         orderData.name,
-      phone:        orderData.phone,
-      address:      orderData.address,
-      city:         orderData.city,
-      items:        orderData.items,
-      sub_total:    orderData.subTotal,
-      disc_amt:     orderData.discAmt,
-      ship_fee:     orderData.shipFee,
-      grand_total:  orderData.grandTotal,
-      payment:      orderData.payment,
-      note:         orderData.note || '',
-      tier_name:    orderData.tierName || '',
-      is_wholesale: orderData.isWholesale || false,
-    }).then(({ error }) => { if (error) console.warn('Supabase order error:', error); });
+  if (!_sb) return;
 
-    // Cập nhật điểm tích lũy — chỉ cho khách lẻ (Bug 3 fix)
-    if (earnPoints && orderData.userPhone) {
-      const newSpent = (user.totalSpent || 0) + spentDelta;
-      const newTier  = getTier(newSpent).key;
-      _sb.from('users').update({
-        total_spent: newSpent,
-        tier: newTier,
-        order_count: (user.orders?.length || 0) + 1,
-      }).eq('phone', orderData.userPhone)
-        .then(({ error }) => { if (error) console.warn('Supabase user update error:', error); });
-    }
+  // Gửi đơn hàng lên Supabase — retry 3 lần, fail thì queue
+  const orderPayload = {
+    order_code:   orderData.orderCode,
+    user_phone:   orderData.userPhone || null,
+    name:         orderData.name,
+    phone:        orderData.phone,
+    address:      orderData.address,
+    city:         orderData.city,
+    items:        orderData.items,
+    sub_total:    orderData.subTotal,
+    disc_amt:     orderData.discAmt,
+    ship_fee:     orderData.shipFee,
+    grand_total:  orderData.grandTotal,
+    payment:      orderData.payment,
+    note:         orderData.note || '',
+    tier_name:    orderData.tierName || '',
+    is_wholesale: orderData.isWholesale || false,
+  };
+  const { ok: orderOk } = await sbRetry(() => _sb.from('orders').insert(orderPayload));
+  if (!orderOk) { _queueOrder(orderPayload); console.warn('[BCM] Order queued (network issue)'); }
+
+  // Cập nhật điểm tích lũy — retry 3 lần, fail thì queue
+  if (earnPoints && orderData.userPhone) {
+    const newSpent = (user.totalSpent || 0) + spentDelta;
+    const newTier  = getTier(newSpent).key;
+    const orderCount = (user.orders?.length || 0) + 1;
+    const { ok: ptOk } = await sbRetry(() =>
+      _sb.from('users').update({ total_spent: newSpent, tier: newTier, order_count: orderCount })
+        .eq('phone', orderData.userPhone)
+    );
+    if (!ptOk) { _queuePoints(orderData.userPhone, newSpent, newTier, orderCount); console.warn('[BCM] Points queued (network issue)'); }
   }
 }
 
@@ -1472,6 +1539,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initReveal();
   initScrollTop();
   initNavScroll();
+  // Flush điểm/đơn hàng còn tồn đọng từ lần trước (nếu mạng yếu khi đặt hàng)
+  setTimeout(() => { flushPendingPoints(); flushPendingOrders(); }, 3000);
   setTimeout(initMagneticBtns, 500);
   setTimeout(initLiveNotif, 4000);
 });
