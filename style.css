@@ -1488,7 +1488,7 @@ footer { background: var(--charcoal); padding: 48px 24px 28px; }
    SCROLL TO TOP
    ============================================ */
 .scroll-top {
-  position: fixed; bottom: 88px; right: 20px; z-index: 8900;
+  position: fixed; bottom: 148px; right: 20px; z-index: 8900;
   width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer;
   background: var(--charcoal); color: var(--yellow);
   display: flex; align-items: center; justify-content: center;
@@ -1502,6 +1502,32 @@ footer { background: var(--charcoal); padding: 48px 24px 28px; }
 
 /* Nav active on scroll */
 nav a.nav-active { color: var(--yellow) !important; background: rgba(255,180,23,0.12); }
+
+/* ============================================
+   MESSENGER WIDGET
+   ============================================ */
+.messenger-widget {
+  position: fixed; bottom: 84px; right: 20px; z-index: 9000;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, #0078FF 0%, #A033FF 100%);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,120,255,.40);
+  text-decoration: none; color: #fff; font-size: 1.5rem;
+  transition: transform .2s, box-shadow .2s;
+  animation: mess-pulse 2.5s infinite;
+}
+.messenger-widget:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(0,120,255,.55); }
+.messenger-tooltip {
+  position: absolute; right: 60px; background: #333; color: #fff;
+  font-family: 'Inter', sans-serif; font-size: .75rem; font-weight: 600;
+  padding: 4px 10px; border-radius: 6px; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.messenger-widget:hover .messenger-tooltip { opacity: 1; }
+@keyframes mess-pulse {
+  0%,100% { box-shadow: 0 4px 20px rgba(0,120,255,.40); }
+  50%      { box-shadow: 0 4px 28px rgba(0,120,255,.70), 0 0 0 8px rgba(0,120,255,.10); }
+}
 
 /* ============================================
    ZALO WIDGET
